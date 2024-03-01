@@ -1,3 +1,8 @@
+"""
+Input File Module
+This module provides an abstract class for representing various input files.
+"""
+
 import abc
 import gzip
 from pathlib import Path
@@ -69,16 +74,19 @@ class InputFile(abc.ABC):
         # Default to text file
         return open(self._filepath, mode=mode, encoding=encoding)
 
+    # pylint: disable=no-member
     def articles(self) -> Iterable[Article]:
         """
-            Return all articles for the document found in the input file.
+        Return all articles for the document found in the input file.
 
-            Yields:
-                Article: An article object.
+        Yields:
+            Article: An article object.
         """
-        for document in self.doc():  # Iterate over each Document object
-            for article in document.articles():  # Iterate over articles in the Document
-                yield article
+
+        yield from self.doc().articles()
+        #for document in self.doc():  # Iterate over each Document object
+        # for article in self.doc.articles():  # Iterate over articles in the Document
+        #     yield article
 
     @abc.abstractmethod
     def doc(self) -> Document:
