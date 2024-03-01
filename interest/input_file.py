@@ -8,7 +8,7 @@ import gzip
 from pathlib import Path
 from typing import Iterable, TextIO
 from .document import Document, Article
-#from .document_filter import DocumentFilter
+# from .document_filter import DocumentFilter
 
 
 class InputFile(abc.ABC):
@@ -23,7 +23,8 @@ class InputFile(abc.ABC):
         filepath(): Get the file path of the input file.
         base_file_name(): Output a list of documents in the input file.
         open(mode, encoding): Open the input file for reading.
-        articles(): Return all articles for the document found in the input file.
+        articles(): Return all articles for the document found in the
+        input file.
         doc(): Output a list of documents in the input file.
     """
 
@@ -35,6 +36,7 @@ class InputFile(abc.ABC):
                    filepath (Path): The file path of the input file.
         """
         self._filepath = filepath
+
     @property
     def filepath(self) -> Path:
         """
@@ -50,7 +52,8 @@ class InputFile(abc.ABC):
         """
         Output a list of documents in the input file.
 
-        This can be a singleton list if an input file contains only one document.
+        This can be a singleton list if an input file contains only
+        one document.
 
         Returns:
             str: The base file name without extension.
@@ -84,8 +87,9 @@ class InputFile(abc.ABC):
         """
 
         yield from self.doc().articles()
-        #for document in self.doc():  # Iterate over each Document object
-        # for article in self.doc.articles():  # Iterate over articles in the Document
+        # for document in self.doc():  # Iterate over each Document object
+        # for article in self.doc.articles():  # Iterate over articles in
+        # the Document
         #     yield article
 
     @abc.abstractmethod
@@ -93,7 +97,8 @@ class InputFile(abc.ABC):
         """
             Output a list of documents in the input file.
 
-            This can be a singleton list if an input file contains only one document.
+            This can be a singleton list if an input file contains only
+            one document.
 
             Returns:
                 Document: A document object.

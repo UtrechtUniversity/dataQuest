@@ -1,8 +1,9 @@
 # pylint: disable=too-few-public-methods
 """
-This module defines the Document class, which represents a document containing articles.
+This module defines the Document class, which represents a document
+containing articles.
 """
-from typing import Optional,List
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -16,7 +17,8 @@ class Article:
         Attributes:
             id (str): The unique identifier of the article.
             title (str): The title of the article.
-            body (str): The body text of the article, represented as a single string.
+            body (str): The body text of the article, represented as
+            a single string.
     """
     def __init__(self, article_id: str, title: str, body: list) -> None:
         """Initialize an Article object with the given ID, title, and body.
@@ -24,7 +26,8 @@ class Article:
                 Args:
                     id (str): The unique identifier of the article.
                     title (str): The title of the article.
-                    body (list): The body text of the article, provided as a list of paragraphs.
+                    body (list): The body text of the article, provided as a
+                    list of paragraphs.
         """
         self.id = article_id
         self.title = title
@@ -41,24 +44,31 @@ class Document:
 
         Args:
             title (str): The title of the document.
-            publish_date (str): The publication date of the document in the format 'YYYY-MM-DD'.
+            publish_date (str): The publication date of the document in
+            the format 'YYYY-MM-DD'.
             language (str): The language of the document.
-            articles (List[Article]): A list of articles included in the document.
+            articles (List[Article]): A list of articles included in
+             the document.
 
         Attributes:
             _title (str): The title of the document.
-            _publish_date (str): The publication date of the document in the format 'YYYY-MM-DD'.
-            _year (Optional[int]): The year of publication, extracted from publish_date.
+            _publish_date (str): The publication date of the document in
+            the format 'YYYY-MM-DD'.
+            _year (Optional[int]): The year of publication, extracted from
+            publish_date.
             _language (str): The language of the document.
-            _articles (List[Article]): A list of articles included in the document.
+            _articles (List[Article]): A list of articles included in the
+             document.
 
         Properties:
             title (str): Getter for the title of the document.
-            publish_date (str): Getter for the publication date of the document.
+            publish_date (str): Getter for the publication date of the
+            document.
             year (Optional[int]): Getter for the year of publication.
             decade (Optional[int]): Getter for the decade of publication.
             language (str): Getter for the language of the document.
-            articles (List[Article]): Getter for the list of articles included in the document.
+            articles (List[Article]): Getter for the list of articles
+            included in the document.
     """
     def __init__(self, title: str, publish_date: str, language: str,
                  articles: List[Article]) -> None:
@@ -94,8 +104,8 @@ class Document:
             Getter for the year of publication.
 
             Returns:
-                Optional[int]: The year of publication extracted from publish_date,
-                or None if it cannot be determined.
+                Optional[int]: The year of publication extracted
+                from publish_date, or None if it cannot be determined.
         """
         if self._year is not None:
             return self._year
@@ -112,7 +122,8 @@ class Document:
             Getter for the decade of publication.
 
             Returns:
-                Optional[int]: The decade of publication extracted from publish_date,
+                Optional[int]: The decade of publication extracted from
+                publish_date,
                 or None if it cannot be determined.
         """
         _ = self.year

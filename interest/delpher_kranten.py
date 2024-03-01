@@ -11,6 +11,7 @@ from typing import Optional
 from .document import Document, Article
 from .input_file import InputFile
 
+
 class KrantenFile(InputFile):
     """
     An InputFile implementation for Delpher Kranten.
@@ -29,9 +30,12 @@ class KrantenFile(InputFile):
         ENCODING (str): The encoding format for reading the file.
 
     Methods:
-        read_json(json_file): Read JSON data from a file and parse it into a Document object.
-        base_file_name(): Extract the base file name without extension from the filepath.
-        doc(): Read the directory and parse the JSON file into a Document object.
+        read_json(json_file): Read JSON data from a file and parse it into
+        a Document object.
+        base_file_name(): Extract the base file name without extension from
+        the filepath.
+        doc(): Read the directory and parse the JSON file into a Document
+        object.
     """
 
     METADATA_FIELD = "newsletter_metadata"
@@ -43,7 +47,7 @@ class KrantenFile(InputFile):
     ARTICLE_BODY_FIELD = "body"
     ENCODING = "utf-8"
 
-    def read_json(self,json_file) -> Optional[Document]:
+    def read_json(self, json_file) -> Optional[Document]:
         """
                 Read JSON data from a file and parse it into a Document object.
 
@@ -51,8 +55,8 @@ class KrantenFile(InputFile):
                     json_file: A file object containing JSON data.
 
                 Returns:
-                    Optional[Document]: A Document object parsed from the JSON data,
-                     or None if parsing fails.
+                    Optional[Document]: A Document object parsed from
+                    the JSON data, or None if parsing fails.
         """
         try:
             json_data = json.load(json_file)
@@ -67,15 +71,18 @@ class KrantenFile(InputFile):
             for article_id, article in articles_data.items():
                 article_title = article[self.ARTICLE_TITLE_FIELD]
                 article_body = article[self.ARTICLE_BODY_FIELD]
-                article = Article(article_id= article_id, title=article_title, body=article_body)
+                article = Article(article_id=article_id, title=article_title,
+                                  body=article_body)
                 articles.append(article)
 
-            document = Document(title=document_title, publish_date=publish_date, language=language,
+            document = Document(title=document_title,
+                                publish_date=publish_date,
+                                language=language,
                                 articles=articles)
             return document
 
         except (json.JSONDecodeError, KeyError) as e:
-            logging.error("Error parsing JSON data: %s",e)
+            logging.error("Error parsing JSON data: %s", e)
             return None
 
     def base_file_name(self) -> str:
@@ -91,11 +98,12 @@ class KrantenFile(InputFile):
 
     def doc(self) -> Optional[Document]:
         """
-                Read the directory and parse the JSON file into a Document object.
+                Read the directory and parse the JSON file into a Document
+                object.
 
                 Returns:
-                    Optional[Document]: A Document object parsed from the JSON data,
-                     or None if parsing fails.
+                    Optional[Document]: A Document object parsed from the
+                    JSON data, or None if parsing fails.
         """
         try:
             logging.info("Reading directory '%s'...", self._filepath)
@@ -105,5 +113,6 @@ class KrantenFile(InputFile):
             return document
 
         except OSError as e:
-            logging.error("Error processing gzip file '%s': %s",self._filepath,e)
+            logging.error("Error processing gzip file '%s': %s",
+                          self._filepath, e)
             return None
