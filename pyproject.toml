@@ -8,6 +8,7 @@ description = "A package to extract hystorical news sentiments"
 authors = [
     {name = "Shiva Nadi", email = "s.nadi@uu.nl"},
     {name = "Parisa Zahedi", email = "p.zahedi@uu.nl"},
+    {name = "Matty Vermet", email = "m.s.vermet@uu.nl"}
 ]
 readme = "README.md"
 requires-python = ">=3.8"
@@ -23,8 +24,6 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    # "numpy ~= 1.23.4",
-    # "scikit-learn ~= 0.19.1",
 ]
 
 [project.optional-dependencies]
