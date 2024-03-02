@@ -8,7 +8,7 @@ import gzip
 from pathlib import Path
 from typing import Iterable, TextIO
 from .document import Document, Article
-# from .document_filter import DocumentFilter
+from .document_filter import DocumentFilter
 
 
 class InputFile(abc.ABC):
@@ -105,10 +105,10 @@ class InputFile(abc.ABC):
         """
         return NotImplemented
 
-    # def selected_articles(self, filter: DocumentFilter) -> Iterable[Article]:
-    #     document = self.doc()
-    #     if filter.filter_document(document):
-    #         if document.articles() is not None:
-    #             for article in document.articles():
-    #                 if filter.filter_article(article):
-    #                     yield article
+    def selected_articles(self, filter: DocumentFilter) -> Iterable[Article]:
+        document = self.doc()
+        if filter.filter_document(document):
+            if document.articles is not None:
+                for article in document.articles:
+                    if filter.filter_article(article):
+                        yield article
