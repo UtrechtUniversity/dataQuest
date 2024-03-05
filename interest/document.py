@@ -3,7 +3,7 @@
 This module defines the Document class, which represents a document
 containing articles.
 """
-from typing import Optional, List
+from typing import Optional, List, Union
 from datetime import datetime
 
 
@@ -20,13 +20,13 @@ class Article:
             body (str): The body text of the article, represented as
             a single string.
     """
-    def __init__(self, article_id: str, title: str, body: list) -> None:
+    def __init__(self, article_id: str, title: str, body: Union[str, List[str]]) -> None:
         """Initialize an Article object with the given ID, title, and body.
 
                 Args:
                     id (str): The unique identifier of the article.
                     title (str): The title of the article.
-                    body (list): The body text of the article, provided as a
+                    body (Union[str, List[str]): The body text of the article, provided as a
                     list of paragraphs.
         """
         self.id = article_id
