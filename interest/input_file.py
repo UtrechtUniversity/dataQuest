@@ -74,10 +74,12 @@ class InputFile(abc.ABC):
                     TextIO: A file object for reading the input file.
         """
         if self._filepath.suffix.startswith(".gz"):
-            return cast(TextIO,gzip.open(self._filepath, mode=mode, encoding=encoding))
+            return cast(TextIO, gzip.open(self._filepath, mode=mode,
+                                          encoding=encoding))
 
         # Default to text file
-        return cast(TextIO,open(self._filepath, mode=mode, encoding=encoding))
+        return cast(TextIO, open(self._filepath,
+                                 mode=mode, encoding=encoding))
 
     # pylint: disable=no-member
     def articles(self) -> Iterable[Article]:
@@ -91,7 +93,8 @@ class InputFile(abc.ABC):
         if doc is not None:
             yield from doc.articles
         else:
-            logging.error("Document not found or is None for filepath: %s", self.filepath)
+            logging.error("Document not found or is None for filepath: %s",
+                          self.filepath)
             return
 
     @abc.abstractmethod
