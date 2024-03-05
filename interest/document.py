@@ -89,16 +89,6 @@ class Document:
         return self._title
 
     @property
-    def publish_date(self) -> str:
-        """
-            Getter for the publication date of the document.
-
-            Returns:
-                str: The publication date of the document.
-        """
-        return self._publish_date
-
-    @property
     def year(self) -> Optional[int]:
         """
             Getter for the year of publication.
@@ -128,16 +118,6 @@ class Document:
         """
         _ = self.year
         return int(self._year / 10) * 10 if self._year is not None else None
-
-    @property
-    def language(self) -> str:
-        """
-            Getter for the language of the document.
-
-            Returns:
-                str: The language of the document.
-        """
-        return self._language
 
     @property
     def articles(self) -> List[Article]:
