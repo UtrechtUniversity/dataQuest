@@ -20,14 +20,15 @@ class Article:
             body (str): The body text of the article, represented as
             a single string.
     """
-    def __init__(self, article_id: str, title: str, body: Union[str, List[str]]) -> None:
+    def __init__(self, article_id: str, title: str,
+                 body: Union[str, List[str]]) -> None:
         """Initialize an Article object with the given ID, title, and body.
 
                 Args:
                     id (str): The unique identifier of the article.
                     title (str): The title of the article.
-                    body (Union[str, List[str]): The body text of the article, provided as a
-                    list of paragraphs.
+                    body (Union[str, List[str]): The body text of the article,
+                    provided as a list of paragraphs.
         """
         self.id = article_id
         self.title = title
