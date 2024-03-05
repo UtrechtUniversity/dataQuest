@@ -72,7 +72,7 @@ class Document:
     """
     def __init__(self, title: str, publish_date: str, language: str,
                  articles: List[Article]) -> None:
-        self._year = None
+        self._year: Optional[int] = None
         self._articles = articles
         self._title = title
         self._publish_date = publish_date

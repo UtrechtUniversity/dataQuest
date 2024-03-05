@@ -6,8 +6,10 @@ This module provides an abstract class for representing various input files.
 import abc
 import gzip
 from pathlib import Path
-from typing import Iterable, TextIO
+from typing import Iterable, TextIO, cast, Optional
 from interest.document import Document, Article
+import logging
+
 # from .document_filter import DocumentFilter
 
 
@@ -72,10 +74,10 @@ class InputFile(abc.ABC):
                     TextIO: A file object for reading the input file.
         """
         if self._filepath.suffix.startswith(".gz"):
-            return gzip.open(self._filepath, mode=mode, encoding=encoding)
+            return cast(TextIO,gzip.open(self._filepath, mode=mode, encoding=encoding))
 
         # Default to text file
-        return open(self._filepath, mode=mode, encoding=encoding)
+        return cast(TextIO,open(self._filepath, mode=mode, encoding=encoding))
 
     # pylint: disable=no-member
     def articles(self) -> Iterable[Article]:
@@ -85,15 +87,15 @@ class InputFile(abc.ABC):
         Yields:
             Article: An article object.
         """
-
-        yield from self.doc().articles()
-        # for document in self.doc():  # Iterate over each Document object
-        # for article in self.doc.articles():  # Iterate over articles in
-        # the Document
-        #     yield article
+        doc = self.doc()
+        if doc is not None:
+            yield from doc.articles
+        else:
+            logging.error("Document not found or is None for filepath: %s", self.filepath)
+            return
 
     @abc.abstractmethod
-    def doc(self) -> Document:
+    def doc(self) -> Optional[Document]:
         """
             Output a list of documents in the input file.
 
