@@ -7,7 +7,7 @@ import abc
 import gzip
 from pathlib import Path
 from typing import Iterable, TextIO
-from .document import Document, Article
+from interest.document import Document, Article
 # from .document_filter import DocumentFilter
 
 
