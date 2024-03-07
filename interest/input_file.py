@@ -116,4 +116,3 @@ class InputFile(abc.ABC):
                 for article in document.articles:
                     if filter.filter_article(article):
                         yield article
-

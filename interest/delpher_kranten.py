@@ -12,7 +12,6 @@ from interest.document import Document, Article
 from interest.input_file import InputFile
 
 
-
 class KrantenFile(InputFile):
     """
     An InputFile implementation for Delpher Kranten.

@@ -1,4 +1,5 @@
-from interest.document_filter import *
+from interest.document_filter import CompoundFilter, TitleFilter
+from interest.document_filter import YearFilter, DecadeFilter, KeywordsFilter
 # from sklearn.feature_extraction.text import CountVectorizer
 import json
 # import os
@@ -7,7 +8,8 @@ import json
 #     # Initialize CountVectorizer
 #     vectorizer = CountVectorizer()
 #
-#     # Fit the vectorizer to the document and transform the document into a word frequency matrix
+#     # Fit the vectorizer to the document and transform the document
+#     # into a word frequency matrix
 #     word_frequency_matrix = vectorizer.fit_transform([document])
 #
 #     # Get the vocabulary (list of words) and their corresponding indices
@@ -17,11 +19,13 @@ import json
 #     word_frequency_vector = word_frequency_matrix.toarray()[0]
 #
 #     # Create a dictionary mapping words to their frequencies
-#     word_frequency_dict = dict(zip(vocabulary, word_frequency_vector.tolist()))
+#     word_frequency_dict = dict(zip(vocabulary,
+#                           word_frequency_vector.tolist()))
 #
 #     return word_frequency_dict
 
-def load_filters_from_config(config_file) -> CompoundFilter :
+
+def load_filters_from_config(config_file) -> CompoundFilter:
     with open(config_file, 'r') as f:
         config = json.load(f)
 
@@ -40,7 +44,8 @@ def load_filters_from_config(config_file) -> CompoundFilter :
     return CompoundFilter(filters)
 
 
-# def save_filtered_articles(input_file,article_id,word_freq,output_dir) -> None:
+# def save_filtered_articles(input_file,article_id,word_freq,output_dir)
+# -> None:
 #
 #     data = {
 #         "file_path": str(input_file.filepath),
