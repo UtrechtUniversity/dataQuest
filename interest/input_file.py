@@ -111,8 +111,9 @@ class InputFile(abc.ABC):
 
     def selected_articles(self, filter: DocumentFilter) -> Iterable[Article]:
         document = self.doc()
-        if filter.filter_document(document):
-            if document.articles is not None:
-                for article in document.articles:
-                    if filter.filter_article(article):
-                        yield article
+        if document is not None:
+            if filter.filter_document(document):
+                if document.articles is not None:
+                    for article in document.articles:
+                        if filter.filter_article(article):
+                            yield article

@@ -1,7 +1,9 @@
-from interest.document_filter import CompoundFilter, TitleFilter
-from interest.document_filter import YearFilter, DecadeFilter, KeywordsFilter
+from interest.document_filter import YearFilter, TitleFilter, DocumentFilter
+from interest.document_filter import (CompoundFilter, DecadeFilter,
+                                      KeywordsFilter)
 # from sklearn.feature_extraction.text import CountVectorizer
 import json
+from typing import List
 # import os
 
 # def calculate_word_frequency_per_doc(document):
@@ -29,7 +31,7 @@ def load_filters_from_config(config_file) -> CompoundFilter:
     with open(config_file, 'r') as f:
         config = json.load(f)
 
-    filters = []
+    filters: List[DocumentFilter] = []
     for filter_config in config['filters']:
         filter_type = filter_config['type']
         if filter_type == 'TitleFilter':
