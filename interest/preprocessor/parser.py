@@ -4,7 +4,7 @@ import tarfile
 import gzip
 import json
 import xml.etree.ElementTree as ET
-from typing import Dict, Union
+from typing import Dict, Union, Any, Optional, IO,List
 import logging
 
 
@@ -73,7 +73,7 @@ class XMLExtractor:
         Returns:
             Dict[str, Union[Dict[str, str], Dict[int, Dict[str, str]]]]: A dictionary containing extracted content and metadata.  # noqa: E501
         """
-        news_dict = {"newsletter_metadata": {}, "articles": {}}
+        news_dict: Dict[str, Any] = {"newsletter_metadata": {}, "articles": {}}
         id = 0
         for entry in outer_tar:
             try:
@@ -88,9 +88,11 @@ class XMLExtractor:
 
                 elif entry.name.endswith(".gz"):
                     gz_member = next(member for member in outer_tar.getmembers() if member.name.endswith('.gz'))  # noqa: E501
-                    with outer_tar.extractfile(gz_member) as gz_file:
+                    with outer_tar.extractfile(gz_member) as gz_file:  # type: ignore
                         with gzip.open(gz_file, 'rt') as xml_file:
                             xml_string = xml_file.read()
+                            if isinstance(xml_string, bytes):
+                                xml_string = xml_string.decode('utf-8')
                             newsletter_metadata = self.extract_meta(xml_string)
                             news_dict["newsletter_metadata"] = newsletter_metadata  # noqa: E501
                 else:
@@ -130,7 +132,7 @@ class XMLExtractor:
     #         logging.error(f"Error saving JSON to {output_file}: {e}")
 
     @staticmethod
-    def extract_article(xml_content: str, file_name: str) -> Dict[str, str]:
+    def extract_article(xml_content: str, file_name: str) -> Dict[str, Union[str, List[Optional[str]]]]:
         """
         Extracts article title and body from XML content.
 
@@ -139,7 +141,8 @@ class XMLExtractor:
             file_name (str): Name of the XML file.
 
         Returns:
-            Dict[str, str]: A dictionary containing the extracted title and body of the article.  # noqa: E501
+            Dict[Optional[str], list[str]]: A dictionary containing the extracted title and body of the article.
+              body contains a list of paragraphs.  # noqa: E501
         """
         try:
             root = ET.fromstring(xml_content)
@@ -152,14 +155,15 @@ class XMLExtractor:
             logging.warning("More than one titles are extracted for the article.")  # noqa: E501
         if not title_values:
             logging.warning("No title is extracted for the article.")
-            title = None
+            title = ""
         else:
-            title = title_values[0]
+            title = title_values[0] if title_values[0] is not None else ""
+            # title = title_values[0]
 
         body_values = [element.text for element in root.iter() if element.tag.endswith('p')]  # noqa: E501
         if not body_values:
             logging.warning("No body is extracted.")
-            body = None
+            body = []
         # elif len(body_values) > 1:
         #     logging.warning("There are more than one paragraphs in the article.")  # noqa: E501
         #     body = ' '.join(body_values)
@@ -167,9 +171,10 @@ class XMLExtractor:
             # body = body_values[0]
             body = body_values
 
+
         return {"title": title, "body": body}
 
-    def extract_meta(self,xml_string: str) -> Dict[str, Union[str, None]]:
+    def extract_meta(self, xml_string: str) -> Dict[str, Union[str, None]]:
         """
         Extracts metadata from XML string.
 
@@ -195,7 +200,9 @@ class XMLExtractor:
                 logging.warning(f"No {field} is extracted.")
                 newsletter_metadata[field] = None
             else:
-                newsletter_metadata[field] = field_values[0] if field != "spatial" else ", ".join(field_values)  # noqa: E501
+                filtered_field_values = [value for value in field_values if value is not None]
+                newsletter_metadata[field] = filtered_field_values[0] if field != "spatial" else ", ".join(filtered_field_values)  # noqa: E501
+
+                # newsletter_metadata[field] = field_values[0] if field != "spatial" else ", ".join(field_values)  # noqa: E501
 
         return newsletter_metadata
- 
