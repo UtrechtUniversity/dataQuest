@@ -3,7 +3,7 @@
 This module defines the Document class, which represents a document
 containing articles.
 """
-from typing import Optional, List
+from typing import Optional, List, Union
 from datetime import datetime
 
 
@@ -20,14 +20,15 @@ class Article:
             body (str): The body text of the article, represented as
             a single string.
     """
-    def __init__(self, article_id: str, title: str, body: list) -> None:
+    def __init__(self, article_id: str, title: str,
+                 body: Union[str, List[str]]) -> None:
         """Initialize an Article object with the given ID, title, and body.
 
                 Args:
                     id (str): The unique identifier of the article.
                     title (str): The title of the article.
-                    body (list): The body text of the article, provided as a
-                    list of paragraphs.
+                    body (Union[str, List[str]): The body text of the article,
+                    provided as a list of paragraphs.
         """
         self.id = article_id
         self.title = title
@@ -72,7 +73,7 @@ class Document:
     """
     def __init__(self, title: str, publish_date: str, language: str,
                  articles: List[Article]) -> None:
-        self._year = None
+        self._year: Optional[int] = None
         self._articles = articles
         self._title = title
         self._publish_date = publish_date
@@ -87,16 +88,6 @@ class Document:
                 str: The title of the document.
         """
         return self._title
-
-    @property
-    def publish_date(self) -> str:
-        """
-            Getter for the publication date of the document.
-
-            Returns:
-                str: The publication date of the document.
-        """
-        return self._publish_date
 
     @property
     def year(self) -> Optional[int]:
@@ -128,16 +119,6 @@ class Document:
         """
         _ = self.year
         return int(self._year / 10) * 10 if self._year is not None else None
-
-    @property
-    def language(self) -> str:
-        """
-            Getter for the language of the document.
-
-            Returns:
-                str: The language of the document.
-        """
-        return self._language
 
     @property
     def articles(self) -> List[Article]:

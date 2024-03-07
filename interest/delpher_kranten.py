@@ -8,8 +8,9 @@ import json
 import logging
 import os
 from typing import Optional
-from .document import Document, Article
-from .input_file import InputFile
+from interest.document import Document, Article
+from interest.input_file import InputFile
+
 
 
 class KrantenFile(InputFile):
