@@ -4,7 +4,7 @@ import tarfile
 import gzip
 import json
 import xml.etree.ElementTree as ET
-from typing import Dict, Union, Any, Optional, IO,List
+from typing import Dict, Union, Any, Optional, List
 import logging
 
 
@@ -88,7 +88,7 @@ class XMLExtractor:
 
                 elif entry.name.endswith(".gz"):
                     gz_member = next(member for member in outer_tar.getmembers() if member.name.endswith('.gz'))  # noqa: E501
-                    with outer_tar.extractfile(gz_member) as gz_file:  # type: ignore
+                    with outer_tar.extractfile(gz_member) as gz_file:  # type: ignore  # noqa: E501
                         with gzip.open(gz_file, 'rt') as xml_file:
                             xml_string = xml_file.read()
                             if isinstance(xml_string, bytes):
@@ -132,7 +132,7 @@ class XMLExtractor:
     #         logging.error(f"Error saving JSON to {output_file}: {e}")
 
     @staticmethod
-    def extract_article(xml_content: str, file_name: str) -> Dict[str, Union[str, List[Optional[str]]]]:
+    def extract_article(xml_content: str, file_name: str) -> Dict[str, Union[str, List[Optional[str]]]]:  # noqa: E501
         """
         Extracts article title and body from XML content.
 
@@ -171,7 +171,6 @@ class XMLExtractor:
             # body = body_values[0]
             body = body_values
 
-
         return {"title": title, "body": body}
 
     def extract_meta(self, xml_string: str) -> Dict[str, Union[str, None]]:
@@ -200,7 +199,7 @@ class XMLExtractor:
                 logging.warning(f"No {field} is extracted.")
                 newsletter_metadata[field] = None
             else:
-                filtered_field_values = [value for value in field_values if value is not None]
+                filtered_field_values = [value for value in field_values if value is not None]  # noqa: E501
                 newsletter_metadata[field] = filtered_field_values[0] if field != "spatial" else ", ".join(filtered_field_values)  # noqa: E501
 
                 # newsletter_metadata[field] = field_values[0] if field != "spatial" else ", ".join(field_values)  # noqa: E501
