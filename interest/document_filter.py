@@ -4,7 +4,8 @@ This module provides classes for filtering documents and articles.
 """
 from abc import ABC, abstractmethod
 from typing import List
-from .document import Document,Article
+from .document import Document, Article
+
 
 class DocumentFilter(ABC):
     """
@@ -34,13 +35,15 @@ class DocumentFilter(ABC):
         """
                 Method to filter articles.
 
-                By default, returns True, allowing all articles to pass through.
+                By default, returns True, allowing all articles to
+                pass through.
 
                 Args:
                     _article (Article): The article to be filtered.
 
                 Returns:
-                    bool: True if the article passes the filter, False otherwise.
+                    bool: True if the article passes the filter,
+                     False otherwise.
         """
         return True
 
@@ -87,8 +90,8 @@ class YearFilter(DocumentFilter):
                     document (Document): The document to be filtered.
 
                 Returns:
-                    bool: True if the document's year matches the specified year,
-                     False otherwise.
+                    bool: True if the document's year matches the specified
+                    year, False otherwise.
         """
         return document.year == self.year
 
@@ -172,9 +175,11 @@ class CompoundFilter(DocumentFilter):
                     document (Document): The document to be filtered.
 
                 Returns:
-                    bool: True if the document passes all filters, False otherwise.
+                    bool: True if the document passes all filters,
+                    False otherwise.
         """
-        return all(filter_.filter_document(document) for filter_ in self.filters)
+        return all(filter_.filter_document(document)
+                   for filter_ in self.filters)
 
     def filter_article(self, article: Article) -> bool:
         """
@@ -184,7 +189,8 @@ class CompoundFilter(DocumentFilter):
                     article (Article): The article to be filtered.
 
                 Returns:
-                    bool: True if the article passes all filters, False otherwise.
+                    bool: True if the article passes all filters,
+                    False otherwise.
         """
         return all(filter_.filter_article(article) for filter_ in self.filters)
 
@@ -193,8 +199,8 @@ class CompoundFilter(DocumentFilter):
                 Check if the compound filter includes a KeywordsFilter.
 
                 Returns:
-                    bool: True if the compound filter includes a KeywordsFilter,
-                    False otherwise.
+                    bool: True if the compound filter includes a
+                    KeywordsFilter, False otherwise.
         """
         for filter_ in self.filters:
             if isinstance(filter_, KeywordsFilter):

@@ -1,5 +1,6 @@
 """
-This script filter articles from input files according to specified configurations.
+This script filter articles from input files according to
+specified configurations.
 """
 
 import argparse
@@ -24,13 +25,15 @@ if __name__ == "__main__":
         "--input-dir",
         type=Path,
         default=".",
-        help="Base directory for reading input files. Defaults to current directory.",
+        help="Base directory for reading input files. "
+             "Defaults to current directory.",
     )
     parser.add_argument(
         "--glob",
         type=str,
         required=True,
-        help="Glob pattern for find input files; e.g. '*.csv', or 'myfile.csv'.",
+        help="Glob pattern for find input files; e.g. '*.csv', "
+             "or 'myfile.csv'.",
     )
     parser.add_argument(
         "--config_path",
@@ -55,7 +58,8 @@ if __name__ == "__main__":
     #     "--output-prefix",
     #     type=str,
     #     required=True,
-    #     help="The prefix to generate output file names, e.g. 'nyt' for 'nyt_1910.txt'",
+    #     help="The prefix to generate output file names,
+    #     e.g. 'nyt' for 'nyt_1910.txt'",
     # )
 
     args = parser.parse_args()
@@ -75,11 +79,14 @@ if __name__ == "__main__":
     # word_freq={}
     # with_keyword_filter = compound_filter.include_keyword_filter()
 
-    for input_file in tqdm(input_files, desc="Filtering articles", unit="file"):
+    for input_file in tqdm(input_files, desc="Filtering articles",
+                           unit="file"):
         for article in input_file.selected_articles(compound_filter):
             print(article.title)
             # if with_keyword_filter:
             #     article_text_clean = text_cleaner.preprocess(article.text)
-            #     word_freq = calculate_word_frequency_per_doc(article_text_clean)
+            #     word_freq =
+            #     calculate_word_frequency_per_doc(article_text_clean)
             #
-            # save_filtered_articles(input_file, article.id, word_freq, args.output_dir)
+            # save_filtered_articles(input_file, article.id, word_freq,
+            # args.output_dir)
