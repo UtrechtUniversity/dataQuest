@@ -1,1 +1,1 @@
-from interest.preprocessor.parser import XMLExtractor
+# from interest.preprocessor.parser import XMLExtractor
