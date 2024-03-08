@@ -59,7 +59,7 @@ class XMLExtractor:
             except tarfile.TarError as e:
                 logging.error(f"Error extracting {tgz_filename}: {e}")
                 continue
-            output_file = os.path.join(output_folder, f"{base_name}.json")
+            output_file = os.path.join(output_folder, f"{base_name}.json.gz")
             self.save_as_json_compressed(news_dict, output_file)
             # self.save_as_json(news_dict, output_file)
 
@@ -199,7 +199,7 @@ class XMLExtractor:
                 logging.warning(f"No {field} is extracted.")
                 newsletter_metadata[field] = None
             else:
-                filtered_field_values = [value for value in field_values if value is not None]  # noqa: E501
+                filtered_field_values = [value for value in field_values if value is not None]  
                 newsletter_metadata[field] = filtered_field_values[0] if field != "spatial" else ", ".join(filtered_field_values)  # noqa: E501
 
                 # newsletter_metadata[field] = field_values[0] if field != "spatial" else ", ".join(field_values)  # noqa: E501
