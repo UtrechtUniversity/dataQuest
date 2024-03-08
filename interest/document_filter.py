@@ -4,7 +4,7 @@ This module provides classes for filtering documents and articles.
 """
 from abc import ABC, abstractmethod
 from typing import List
-from .document import Document, Article
+from interest.document import Document, Article
 
 
 class DocumentFilter(ABC):
