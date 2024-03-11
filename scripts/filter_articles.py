@@ -24,16 +24,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input-dir",
         type=Path,
-        default=".",
-        help="Base directory for reading input files. "
-             "Defaults to current directory.",
+        help="Base directory for reading input files. ",
     )
     parser.add_argument(
         "--glob",
         type=str,
         required=True,
-        help="Glob pattern for find input files; e.g. '*.csv', "
-             "or 'myfile.csv'.",
+        help="Glob pattern for find input files; e.g. '*.gz' ",
     )
     parser.add_argument(
         "--config_path",
@@ -51,7 +48,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=".",
         help="The directory for storing output files.",
     )
     # parser.add_argument(
@@ -69,7 +65,7 @@ if __name__ == "__main__":
 
     input_file_class = INPUT_FILE_TYPES[args.input_type]
     input_files: Iterable[InputFile] = [
-        input_file_class(path) for path in args.input_dir.glob(args.glob)
+        input_file_class(path) for path in args.input_dir.rglob(args.glob)
     ]
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
