@@ -59,7 +59,7 @@ class XMLExtractor:
             except tarfile.TarError as e:
                 logging.error(f"Error extracting {tgz_filename}: {e}")
                 continue
-            output_file = os.path.join(output_folder, f"{base_name}.json")
+            output_file = os.path.join(output_folder, f"{base_name}.json.gz")
             self.save_as_json_compressed(news_dict, output_file)
             # self.save_as_json(news_dict, output_file)
 
