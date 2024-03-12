@@ -1,9 +1,14 @@
+"""
+This script defines functions and classes to categorize files based
+on their timestamps.
+"""
 import os
-from tqdm import tqdm
 from shutil import move
 import argparse
+import logging
 from typing import Iterable
 from pathlib import Path
+from tqdm import tqdm  # type: ignore
 from interest.temporal_categorization import PERIOD_TYPES
 from interest.temporal_categorization.timestamped_data import TimestampedData
 
@@ -33,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output-dir",
         type=Path,
-       required=True,
+        required=True,
         help="The directory for storing output files.",
     )
 
@@ -49,16 +54,18 @@ if __name__ == "__main__":
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    for timestamped_object in tqdm(timestamped_objects, desc="Categorize by timestamp", unit="file"):
+    for timestamped_object in tqdm(timestamped_objects,
+                                   desc="Categorize by timestamp",
+                                   unit="file"):
         timestamp = timestamped_object.categorize()
-        # Create the decade folder if it doesn't exist
         timestamp_folder = os.path.join(args.output_dir, str(timestamp))
         if not os.path.exists(timestamp_folder):
             os.makedirs(timestamp_folder)
 
-        # Move the JSON file to the decade folder
         try:
             move(timestamped_object.filename, timestamp_folder)
-            print(f"Moved {timestamped_object.filename} to {timestamp_folder}")
-        except Exception as e:
-            print(f"Error moving {timestamped_object.filename} to {timestamp_folder}: {e}")
+            logging.warning("Moved %s to %s", timestamped_object.filename,
+                            timestamp_folder)
+        except Exception as e:  # pylint: disable=broad-except
+            logging.error("Error moving %s to %s : %s",
+                          timestamped_object.filename, timestamp_folder, e)
