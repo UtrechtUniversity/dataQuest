@@ -61,8 +61,8 @@ def load_filters_from_config(config_file: Path) -> CompoundFilter:
     return CompoundFilter(filters)
 
 
-def save_filtered_articles(input_file: Any, article_id: str, word_freq: Dict[str, int],
-                           output_dir: str) -> None:
+def save_filtered_articles(input_file: Any, article_id: str,
+                           word_freq: Dict[str, int], output_dir: str) -> None:
     """Save filtered articles data to a JSON file.
 
     Args:
