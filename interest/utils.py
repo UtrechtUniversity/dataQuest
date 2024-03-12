@@ -62,13 +62,12 @@ def load_filters_from_config(config_file: Path) -> CompoundFilter:
 
 
 def save_filtered_articles(input_file: Any, article_id: str,
-                           word_freq: Dict[str, int], output_dir: str) -> None:
+                           output_dir: str) -> None:
     """Save filtered articles data to a JSON file.
 
     Args:
         input_file: The input file object.
         article_id (str): The ID of the article.
-        word_freq (Dict[str, int]): Word frequency data for the article.
         output_dir (str): The directory where the JSON file will be saved.
 
     Returns:
@@ -79,7 +78,6 @@ def save_filtered_articles(input_file: Any, article_id: str,
         "article_id": str(article_id),
         "Date": str(input_file.doc().publish_date),
         "Title": input_file.doc().title,
-        "word_freq": word_freq
     }
 
     output_fp = os.path.join(output_dir, input_file.base_file_name() + '.json')
