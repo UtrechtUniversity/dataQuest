@@ -90,6 +90,16 @@ class Document:
         return self._title
 
     @property
+    def publish_date(self) -> str:
+        """
+           Getter for the publish_date of the document.
+
+           Returns:
+               str: The publish_date of the document.
+        """
+        return self._publish_date
+
+    @property
     def year(self) -> Optional[int]:
         """
             Getter for the year of publication.

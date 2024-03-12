@@ -10,13 +10,11 @@ from typing import Iterable
 from tqdm import tqdm
 
 from interest import INPUT_FILE_TYPES
-# from interest import settings
 from interest.input_file import InputFile
-# from interest.document_filter import CompoundFilter
-# from interest.preprocess.text_cleaner import TextCleaner
-# from interest.utils import calculate_word_frequency_per_doc
+from interest.preprocessor.text_cleaner import TextCleaner
+from interest.utils import calculate_word_frequency_per_doc
 from interest.utils import load_filters_from_config
-# from interest.utils import save_filtered_articles
+from interest.utils import save_filtered_articles
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Filter articles from input files.")
@@ -71,18 +69,17 @@ if __name__ == "__main__":
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     compound_filter = load_filters_from_config(args.config_path)
-    # text_cleaner = TextCleaner()
-    # word_freq={}
-    # with_keyword_filter = compound_filter.include_keyword_filter()
+    text_cleaner = TextCleaner()
+    word_freq={}
+    with_keyword_filter = compound_filter.include_keyword_filter()
 
     for input_file in tqdm(input_files, desc="Filtering articles",
                            unit="file"):
         for article in input_file.selected_articles(compound_filter):
-            print(article.title)
-            # if with_keyword_filter:
-            #     article_text_clean = text_cleaner.preprocess(article.text)
-            #     word_freq =
-            #     calculate_word_frequency_per_doc(article_text_clean)
-            #
-            # save_filtered_articles(input_file, article.id, word_freq,
-            # args.output_dir)
+            if with_keyword_filter:
+                article_text_clean = text_cleaner.preprocess(article.text)
+                word_freq = (calculate_word_frequency_per_doc
+                             (article_text_clean))
+
+            save_filtered_articles(input_file, article.id, word_freq,
+            args.output_dir)
