@@ -6,6 +6,7 @@ from functools import cache
 import re
 from typing import Optional
 import spacy
+import spacy.cli
 
 from interest.settings import SPACY_MODEL
 
