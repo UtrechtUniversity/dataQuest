@@ -1,51 +1,80 @@
-# re-python-package
+# INTEREST
 
-This template repository is created by the [UU Research Engineering team](https://utrechtuniversity.github.io/research-engineering/) and is aimed to provide a simple project template for python package development.
+The code in this repository is implemented to investigate how the sentiment of the news articles changes over decades regarding the topics such as fossil fuel, green energy, etc. The interest python package offers a variety of methods for analysing the sentiment of the news articles. From traditional dictionary-based approaches to cutting-edge similarity-based techniques. The methods are tested on a large dataset of news articles harvested from the national library of the Netherlans ([KB](https://www.kb.nl)).
 
-The template includes:
-- Project directory structure
-- Project configuration using `pyproject.toml`
-- GitHub actions workflows for testing, linting, type checking and publishing on pypi
+## Getting Started
+Clone this repository to your working station to obtain example notebooks and python scripts:
+```
+git clone https://github.com/UtrechtUniversity/historical-news-sentiment.git
+```
 
-Many other project templates exist, check for example this advanced [python template](https://github.com/NLeSC/python-template) by the NL eScience Center.
+### Prerequisites
+To install and run this project you need to have the following prerequisites installed.
+```
+- Python [>=3.9, <3.11]
+```
 
-## Dependencies
-This template uses:
-| Tool | Aim |
-| --- | --- |
-| setuptools | building |
-| flake8, pylint | code linting |
-| pytest | testing |
-| pydocstyle | checking docstrings |
-| mypy | type checking |
-| sphinx | documentation generation |
+### Installation
+To run the project, ensure to install the interest package that is part of this project.
+```
+pip install interest
+```
 
-If needed, most of these tools can be removed by simply removing the GitHub action that calls the tool, or by changing `pyproject.toml`
+### Built with
+These packages are automatically installed in the step above:
+* [scikit-learn](https://scikit-learn.org/stable/)
+* [SciPy](https://scipy.org)
 
-## How to use
+## Usage
+### 1. Preparation
+Harvested KB data is in xml format. Before proceeding, ensure that you have the data prepared. This entails organizing your data into a specific directory structure. Within this directory, you should have several folders for each newsletter, each containing JSON files compressed in the .gz format. These compressed JSON files encapsulate metadata pertaining to newsletters, alongside lists comprising article titles and their corresponding bodies.
+```
+from interest.preprocessor.parser import XMLExtractor
 
-### Step 1: Create new repository from this template
-Click `Use this template` at the top of this page to create a new repository using this template
+extractor = XMLExtractor(Path(input_dir), Path(output_dir))
+extractor.extract_xml_string()
+```
 
-### Step 2: Change the name of your package in pyproject.toml
-- Change the name of the folder `package-name` to the name of your package
-- Open `pyproject.toml` and change `package-name` to the name of your package
-- Also change the authors and optionally any other items that you want to change
+Navigate to scripts folder and run:
+```
+python3 convert_input_files.py --input_dir path/to/raw/xml/data --output_dir path/to/converted/json/compressed/output
+```
 
-### Step 3: Change GitHub Actions workflow
-- Open `.github/workflows/python-package.yml`
-- Change `package-name` to the name of your package (line 21)
-- Many actions are commented out, uncomment them when you want to start using them.
+### 2. Filtering
+To be compeleted...
 
-### Step 4: Replace this README file with your README
-- You may use this [README template](https://github.com/UtrechtUniversity/rse-project-templates/blob/master/README-template.md)
+## About the Project
+**Date**: February 2024
 
-### Step 5: Change the license file
-- Open `LICENSE`, change the copyright holder when required (line 3)
-- Or replace the entire license file if another license applies
+**Researcher(s)**:
 
-### Step 6: Add a citation file
-- Create a citation file for your repository using [cffinit](https://citation-file-format.github.io/cff-initializer-javascript/#/)
+Pim Huijnen (p.huijnen@uu.nl)
 
-### Step 7: Publising on Pypi (optional/later)
-For publishing the package on Pypi you need to create [API tokens](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries).
+**Research Software Engineer(s)**:
+
+- Parisa Zahedi (p.zahedi@uu.nl)
+- Shiva Nadi (s.nadi@uu.nl)
+- Matty Vermet (m.s.vermet@uu.nl)
+
+
+### License
+
+The code in this project is released under [MIT license](LICENSE).
+
+## Contributing
+
+Contributions are what make the open source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+To contribute:
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Contact
+
+Pim Huijnen - p.huijnen@uu.nl
+
+Project Link: [https://github.com/UtrechtUniversity/historical-news-sentiment](https://github.com/UtrechtUniversity/historical-news-sentiment)
