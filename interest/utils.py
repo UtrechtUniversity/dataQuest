@@ -12,26 +12,6 @@ from interest.document_filter import (CompoundFilter, DecadeFilter,
 from interest.settings import ENCODING
 
 
-def calculate_word_frequency_per_doc(document: str) -> Dict[str, int]:
-    """Calculate the word frequency per document.
-
-    Args:
-        document (str): The document for which word frequency is to be
-        calculated.
-
-    Returns:
-        dict: A dictionary where keys are words and values are their respective
-         frequencies.
-    """
-    vectorizer = CountVectorizer()
-    word_frequency_matrix = vectorizer.fit_transform([document])
-    vocabulary = vectorizer.get_feature_names_out()
-    word_frequency_vector = word_frequency_matrix.toarray()[0]
-    word_frequency_dict = dict(zip(vocabulary, word_frequency_vector.tolist()))
-
-    return word_frequency_dict
-
-
 def load_filters_from_config(config_file: Path) -> CompoundFilter:
     """Load document filters from a configuration file.
 
