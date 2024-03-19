@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any
 import json
-from sklearn.feature_extraction.text import CountVectorizer  # type: ignore
 from interest.document_filter import YearFilter, TitleFilter, DocumentFilter
 from interest.document_filter import (CompoundFilter, DecadeFilter,
                                       KeywordsFilter)
