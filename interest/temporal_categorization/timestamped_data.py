@@ -67,7 +67,6 @@ class TimestampedData:
         """
         return self._data
 
-
     def _get_timestamp(self):
         """
         Extracts the timestamp from the data.
