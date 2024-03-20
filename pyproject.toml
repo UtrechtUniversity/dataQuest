@@ -23,7 +23,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 dynamic = ["version"]
-dependencies = ["tqdm"
+dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm"
 ]
 
 [project.optional-dependencies]

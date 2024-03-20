@@ -3,14 +3,18 @@ This script defines functions and classes to categorize files based
 on their timestamps.
 """
 import os
-from shutil import move
 import argparse
 import logging
 from typing import Iterable
 from pathlib import Path
+import pandas as pd
 from tqdm import tqdm  # type: ignore
 from interest.temporal_categorization import PERIOD_TYPES
 from interest.temporal_categorization.timestamped_data import TimestampedData
+
+OUTPUT_FILE_NAME = 'articles'
+FILENAME_COLUMN = 'file_path'
+ARTICLE_ID_COLUMN = 'article_id'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Categorize articles by timestamp.")
@@ -54,18 +58,32 @@ if __name__ == "__main__":
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    for timestamped_object in tqdm(timestamped_objects,
-                                   desc="Categorize by timestamp",
-                                   unit="file"):
-        timestamp = timestamped_object.categorize()
-        timestamp_folder = os.path.join(args.output_dir, str(timestamp))
-        if not os.path.exists(timestamp_folder):
-            os.makedirs(timestamp_folder)
+    try:
+        for timestamped_object in tqdm(timestamped_objects,
+                                       desc="Categorize by timestamp",
+                                       unit="file"):
+            try:
+                timestamp = timestamped_object.categorize()
 
-        try:
-            move(timestamped_object.filename, timestamp_folder)
-            logging.warning("Moved %s to %s", timestamped_object.filename,
-                            timestamp_folder)
-        except Exception as e:  # pylint: disable=broad-except
-            logging.error("Error moving %s to %s : %s",
-                          timestamped_object.filename, timestamp_folder, e)
+                timestamp_file_name = os.path.join(args.output_dir,
+                                                   OUTPUT_FILE_NAME+'_' +
+                                                   str(timestamp)+'.csv')
+                if os.path.isfile(timestamp_file_name):
+                    df = pd.read_csv(timestamp_file_name)
+                else:
+                    df = pd.DataFrame(columns=[FILENAME_COLUMN,
+                                               ARTICLE_ID_COLUMN])
+
+                new_row = {FILENAME_COLUMN: str(
+                               timestamped_object.data()[FILENAME_COLUMN]),
+                           ARTICLE_ID_COLUMN: str(
+                               timestamped_object.data()[ARTICLE_ID_COLUMN])}
+                df = pd.concat([df, pd.DataFrame([new_row])],
+                               ignore_index=True)
+
+                df.to_csv(timestamp_file_name, index=False)
+            except Exception as e:  # pylint: disable=broad-except
+                logging.error("Error processing timestamped object: %s",
+                              str(e))
+    except Exception as e:  # pylint: disable=broad-except
+        logging.error("Error occurred in main loop: %s", str(e))
