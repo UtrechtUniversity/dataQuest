@@ -60,10 +60,10 @@ class TimestampedData:
 
     def data(self):
         """
-                Returns the json data
+        Returns the json data
 
-                Returns:
-                    dict: The loaded JSON data.
+        Returns:
+            dict: The loaded JSON data.
         """
         return self._data
 
