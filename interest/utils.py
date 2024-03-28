@@ -9,7 +9,34 @@ from interest.document_filter import YearFilter, TitleFilter, DocumentFilter
 from interest.document_filter import (CompoundFilter, DecadeFilter,
                                       KeywordsFilter)
 from interest.settings import ENCODING
+from functools import cache
+import spacy
+import spacy.cli
+from typing import Optional
+@cache
+def load_spacy_model(model_name: str, retry: bool = True) \
+        -> Optional[spacy.Language]:
+    """Load and store a sentencize-only SpaCy model
 
+    Downloads the model if necessary.
+
+    Args:
+        model_name (str): The name of the SpaCy model to load.
+        retry (bool, optional): Whether to retry downloading the model
+            if loading fails initially. Defaults to True.
+
+    Returns:
+        spacy.Language: The SpaCy model object for the given name.
+    """
+
+    try:
+        nlp = spacy.load(model_name, disable=["tagger", "parser", "ner"])
+    except OSError as exc:
+        if retry:
+            spacy.cli.download(model_name)
+            return load_spacy_model(model_name, False)
+        raise exc
+    return nlp
 
 def load_filters_from_config(config_file: Path) -> CompoundFilter:
     """Load document filters from a configuration file.
@@ -38,6 +65,29 @@ def load_filters_from_config(config_file: Path) -> CompoundFilter:
             filters.append(KeywordsFilter(filter_config['keywords']))
 
     return CompoundFilter(filters)
+
+
+def get_keywords_from_config(config_file: Path) -> List[str]:
+    with open(config_file, 'r', encoding=ENCODING) as f:
+        config: Dict[str, List[Dict[str, Any]]] = json.load(f)
+
+    for filter_config in config['filters']:
+        filter_type = filter_config['type']
+        if filter_type == 'KeywordsFilter':
+            return filter_config['keywords']
+    return []
+
+
+def get_article_selector_from_config(config_file: Path) -> dict:
+    try:
+        with open(config_file, 'r', encoding=ENCODING) as f:
+            config: Dict[str, str] = json.load(f)["article_selector"]
+        if config:
+            return config
+        else:
+            raise ValueError("Config is empty")
+    except (KeyError, FileNotFoundError):
+        raise ValueError("Article selector not found in config file")
 
 
 def save_filtered_articles(input_file: Any, article_id: str,
