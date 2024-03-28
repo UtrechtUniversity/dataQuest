@@ -30,9 +30,18 @@ class TextCleaner:
         self.stopwords = set(self.stopword_list)
         self.text = ""
 
-    def get_lower_lemma_tokens(self):
+    def get_lower_lemma_tokens(self) -> None:
+        """
+            Get lowercased lemmatized tokens from the text.
+
+            This method processes the text stored in the instance variable
+            `self.text`,tokenizes it using the SpaCy pipeline `self.nlp`,
+            and then lemmatizes each token, converting it to lowercase.
+            Stop words and punctuation tokens are filtered out.
+        """
         doc = self.nlp(self.text)
-        self.text = " ".join([token.lemma_.lower() for token in doc if not token.is_stop and not token.is_punct])
+        self.text = " ".join([token.lemma_.lower() for token in doc
+                              if not token.is_stop and not token.is_punct])
 
     def get_words(self):
         """Tokenize words in the text."""
