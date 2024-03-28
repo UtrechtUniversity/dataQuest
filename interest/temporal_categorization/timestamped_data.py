@@ -58,6 +58,15 @@ class TimestampedData:
         with open(self._filename, 'r', encoding='utf-8') as file:
             return json.load(file)
 
+    def data(self):
+        """
+        Returns the json data
+
+        Returns:
+            dict: The loaded JSON data.
+        """
+        return self._data
+
     def _get_timestamp(self):
         """
         Extracts the timestamp from the data.
