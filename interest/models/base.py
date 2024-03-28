@@ -1,9 +1,10 @@
 """Base class for document embeddings."""
 
 from abc import ABC, abstractmethod
-from typing import Union, Sequence, Dict, Any
-
-#from docembedder.typing import AllEmbedType
+from typing import Union, Sequence
+import scipy
+from numpy import typing as npt
+import numpy as np
 
 
 class BaseEmbedder(ABC):
@@ -14,5 +15,6 @@ class BaseEmbedder(ABC):
         """Train the model on documents."""
 
     @abstractmethod
-    def transform(self, documents: Union[str, Sequence[str]]): #-> AllEmbedType:
+    def transform(self, documents: Union[str, Sequence[str]]) -> (
+            Union)[scipy.sparse.spmatrix, npt.NDArray[np.float_]]:
         """Get the embedding for a document."""

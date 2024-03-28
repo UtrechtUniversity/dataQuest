@@ -3,16 +3,17 @@ Module containing utility functions for the project.
 """
 import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+from functools import cache
 import json
+import spacy
+import spacy.cli
 from interest.document_filter import YearFilter, TitleFilter, DocumentFilter
 from interest.document_filter import (CompoundFilter, DecadeFilter,
                                       KeywordsFilter)
 from interest.settings import ENCODING
-from functools import cache
-import spacy
-import spacy.cli
-from typing import Optional
+
+
 @cache
 def load_spacy_model(model_name: str, retry: bool = True) \
         -> Optional[spacy.Language]:
@@ -37,6 +38,7 @@ def load_spacy_model(model_name: str, retry: bool = True) \
             return load_spacy_model(model_name, False)
         raise exc
     return nlp
+
 
 def load_filters_from_config(config_file: Path) -> CompoundFilter:
     """Load document filters from a configuration file.
@@ -68,26 +70,65 @@ def load_filters_from_config(config_file: Path) -> CompoundFilter:
 
 
 def get_keywords_from_config(config_file: Path) -> List[str]:
-    with open(config_file, 'r', encoding=ENCODING) as f:
-        config: Dict[str, List[Dict[str, Any]]] = json.load(f)
+    """
+        Extract keywords from a JSON configuration file.
 
-    for filter_config in config['filters']:
-        filter_type = filter_config['type']
-        if filter_type == 'KeywordsFilter':
-            return filter_config['keywords']
-    return []
+        Args:
+            config_file (Path): The path to the JSON configuration file.
+
+        Returns:
+            List[str]: The list of keywords extracted from the configuration
+            file.
+
+        Raises:
+            FileNotFoundError: If the config file is not found or cannot be
+            opened.
+            KeyError: If the required keys are not found in the configuration
+            file.
+            TypeError: If the data in the configuration file is not in the
+            expected format.
+    """
+    try:
+        with open(config_file, 'r', encoding=ENCODING) as f:
+            config: Dict[str, List[Dict[str, Any]]] = json.load(f)
+
+        for filter_config in config['filters']:
+            filter_type = filter_config['type']
+            if filter_type == 'KeywordsFilter':
+                return filter_config['keywords']
+        return []
+    except FileNotFoundError as exc:
+        raise FileNotFoundError("Config file not found") from exc
+    except KeyError as exc:
+        raise KeyError("Keywords not found in config file") from exc
 
 
 def get_article_selector_from_config(config_file: Path) -> dict:
+    """
+        Get the article selector configuration from a JSON file.
+
+        Args:
+            config_file (Path): The path to the JSON config file.
+
+        Returns:
+            Dict[str, str]: The article selector configuration.
+
+        Raises:
+            ArticleSelectorNotFoundError: If the article selector
+            is not found in the config file.
+            FileNotFoundError: If the config file is not found.
+    """
     try:
         with open(config_file, 'r', encoding=ENCODING) as f:
             config: Dict[str, str] = json.load(f)["article_selector"]
-        if config:
-            return config
-        else:
+        if not config:
             raise ValueError("Config is empty")
-    except (KeyError, FileNotFoundError):
-        raise ValueError("Article selector not found in config file")
+        return config
+    except FileNotFoundError as exc:
+        raise FileNotFoundError("Config file not found") from exc
+    except KeyError as exc:
+        raise KeyError("Article selector not found in config file") \
+            from exc
 
 
 def save_filtered_articles(input_file: Any, article_id: str,

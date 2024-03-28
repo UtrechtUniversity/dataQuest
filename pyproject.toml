@@ -34,3 +34,16 @@ packages = ["interest"]
 
 [tool.flake8]
 max-line-length = 99
+
+[tool.pylint.'FORMAT']
+max-line-length=100
+max-locals=35
+max-args=10
+
+[[tool.mypy.overrides]]
+module = [
+    "scipy.*",
+    "pandas.*",
+    "sklearn.*"
+]
+ignore_missing_imports = true
