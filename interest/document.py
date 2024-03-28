@@ -3,6 +3,7 @@
 This module defines the Document class, which represents a document
 containing articles.
 """
+import logging
 from typing import Optional, List, Union
 from datetime import datetime
 
@@ -33,8 +34,12 @@ class Article:
         self.id = article_id
         self.title = title
         if isinstance(body, list):
-            article_body = '\n'.join(body)
-            self.text = article_body
+            if any(item is None for item in body):
+                logging.warning("There is a None value in body")
+                self.text = ""
+            else:
+                article_body = '\n'.join(body)
+                self.text = article_body
         else:
             self.text = body
 
