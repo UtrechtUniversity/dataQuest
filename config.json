@@ -12,6 +12,6 @@
     {
       "type": "threshold",
       "value": "0.02"
-    }
-
+    },
+  "output_unit": "paragraph"
 }

@@ -44,11 +44,11 @@ class ArticleProcessor:
         self._file_path = gzip_file_path
         self._article_id = article_id
         self._title: Union[str, None] = ''
-        self._body: Union[str, None] = ''
+        self._body: Union[str, list, None] = ''
         self.selected: bool = False
 
-    def _read_article_from_gzip(self) -> Tuple[Union[str, None],
-                                               Union[str, None]]:
+    def read_article_from_gzip(self, in_paragraph: bool = False) -> Tuple[Union[str, None],
+                                               Union[str, list, None]]:
         """
         Read article content from a gzip file.
 
@@ -63,8 +63,9 @@ class ArticleProcessor:
                 article = articles.get(str(self._article_id), {})
                 title = article.get('title', {})
                 body = article.get('body', {})
-                body_string = " ".join(body)
-                return title, body_string
+
+                #body_string = " ".join(body)
+                return title, body if in_paragraph else " ".join(body)
         except Exception as e:  # pylint: disable=broad-except
             logging.error("Error reading article %s from %s: %s",
                           str(self._article_id), self._file_path, e)
@@ -80,7 +81,7 @@ class ArticleProcessor:
         Returns:
             str: The processed article body.
         """
-        self._title, self._body = self._read_article_from_gzip()
+        self._title, self._body = self.read_article_from_gzip()
         if (self._title is None) or (self._body is None):
             return ""
         clean_title = clean(self._title)
