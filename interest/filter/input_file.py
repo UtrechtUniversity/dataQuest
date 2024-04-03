@@ -8,8 +8,8 @@ import gzip
 import logging
 from pathlib import Path
 from typing import Iterable, TextIO, cast, Optional
-from interest.document import Document, Article
-from interest.document_filter import DocumentFilter
+from interest.filter.document import Document, Article
+from interest.filter.document_filter import DocumentFilter
 
 
 class InputFile(abc.ABC):

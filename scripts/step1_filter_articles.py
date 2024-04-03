@@ -9,8 +9,8 @@ from typing import Iterable
 
 from tqdm import tqdm
 
-from interest import INPUT_FILE_TYPES
-from interest.input_file import InputFile
+from interest.filter import INPUT_FILE_TYPES
+from interest.filter.input_file import InputFile
 from interest.utils import load_filters_from_config
 from interest.utils import save_filtered_articles
 

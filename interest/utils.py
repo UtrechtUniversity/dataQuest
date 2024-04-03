@@ -8,9 +8,9 @@ from functools import cache
 import json
 import spacy
 import spacy.cli
-from interest.document_filter import YearFilter, TitleFilter, DocumentFilter
-from interest.document_filter import (CompoundFilter, DecadeFilter,
-                                      KeywordsFilter)
+from interest.filter.document_filter import YearFilter, TitleFilter, DocumentFilter
+from interest.filter.document_filter import (CompoundFilter, DecadeFilter,
+                      KeywordsFilter)
 from interest.settings import ENCODING
 
 
