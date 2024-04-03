@@ -47,8 +47,8 @@ class ArticleProcessor:
         self._body: Union[str, list, None] = ''
         self.selected: bool = False
 
-    def read_article_from_gzip(self, in_paragraph: bool = False) -> Tuple[Union[str, None],
-                                               Union[str, list, None]]:
+    def read_article_from_gzip(self, in_paragraph: bool = False) -> (
+            Tuple)[Union[str, None], Union[str, list, None]]:
         """
         Read article content from a gzip file.
 
@@ -63,8 +63,6 @@ class ArticleProcessor:
                 article = articles.get(str(self._article_id), {})
                 title = article.get('title', {})
                 body = article.get('body', {})
-
-                #body_string = " ".join(body)
                 return title, body if in_paragraph else " ".join(body)
         except Exception as e:  # pylint: disable=broad-except
             logging.error("Error reading article %s from %s: %s",
@@ -90,4 +88,6 @@ class ArticleProcessor:
         if title_with_keyword:
             self.selected = True
             return ""
-        return clean(self._body)
+        if isinstance(self._body, str):
+            return clean(self._body)
+        return ""
