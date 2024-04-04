@@ -23,7 +23,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 
-dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy"
+dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy","scikit-learn","numpy","scipy"
 ]
 
 [project.optional-dependencies]
