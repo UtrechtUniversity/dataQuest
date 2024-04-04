@@ -1,9 +1,14 @@
 # INTEREST
 
-The code in this repository is implemented to investigate how the sentiment of the news articles changes over decades regarding the topics such as fossil fuel, green energy, etc. The interest python package offers a variety of methods for analysing the sentiment of the news articles. From traditional dictionary-based approaches to cutting-edge similarity-based techniques. The methods are tested on a large dataset of news articles harvested from the national library of the Netherlans ([KB](https://www.kb.nl)).
+The code in this repository implement a pipeline to extract specific articles from a large corpus.
+
+Currently, this tool is tailored for the [Delpher Kranten](https://www.delpher.nl/nl/kranten) corpus, but it can be adapted for other corpora as well.
+
+Articles can be filtered based on individual or multiple features such as title, year, decade, or a set of keywords. To select the most relevant articles, we utilize models such as tf-idf. These models are configurable and extendable.
+
 
 ## Getting Started
-Clone this repository to your working station to obtain example notebooks and python scripts:
+Clone this repository to your working station to obtain examples and python scripts:
 ```
 git clone https://github.com/UtrechtUniversity/historical-news-sentiment.git
 ```
@@ -15,19 +20,69 @@ To install and run this project you need to have the following prerequisites ins
 ```
 
 ### Installation
+#### Option 1 - Install interest package
 To run the project, ensure to install the interest package that is part of this project.
 ```
 pip install interest
 ```
+#### Option 2 - Run from source code
+If you want to run the scripts without installation you need to:  
 
+- Install requirement
+```commandline
+pip install setuptools wheel
+```
+Change your current working directory to the location of your pyproject.toml file.
+```
+python -m build
+pip install .
+```
+- Set PYTHONPATH environment: 
+On Linux and Mac OS, you might have to set the PYTHONPATH environment variable to point to this directory.
+
+```commandline
+export PYTHONPATH="current working directory/historical-news-sentiment:${PYTHONPATH}"
+```
 ### Built with
 These packages are automatically installed in the step above:
 * [scikit-learn](https://scikit-learn.org/stable/)
 * [SciPy](https://scipy.org)
+* [NumPy](https://numpy.org)
+* [spaCy](https://spacy.io)
+* [pandas](https://pandas.pydata.org)
 
 ## Usage
 ### 1. Preparation
-Harvested KB data is in xml format. Before proceeding, ensure that you have the data prepared. This entails organizing your data into a specific directory structure. Within this directory, you should have several folders for each newsletter, each containing JSON files compressed in the .gz format. These compressed JSON files encapsulate metadata pertaining to newsletters, alongside lists comprising article titles and their corresponding bodies.
+#### Data Prepration
+Before proceeding, ensure that you have the data prepared in the following format: The expected format is a set of JSON files compressed in the .gz format. Each JSON file contains metadata related to a newsletter, magazine, etc., as well as a list of article titles and their corresponding bodies. These files may be organized within different folders or sub-folders.
+Below is a snapshot of the JSON file format:
+```commandline
+{
+    "newsletter_metadata": {
+        "title": "Newspaper title ..",
+        "language": "NL",
+        "date": "1878-04-29",
+        ...
+    },
+    "articles": {
+        "1": {
+            "title": "title of article1 ",
+            "body": [
+                "paragraph 1 ....",
+                "paragraph 2...."
+            ]
+        },
+        "2": {
+            "title": "title of article2",
+            "body": [
+                "text..."  
+             ]
+        }
+    }
+}    
+```
+
+In our use case, the harvested KB data is in XML format. We have provided the following script to transform the original data into the expected format.
 ```
 from interest.preprocessor.parser import XMLExtractor
 
@@ -39,10 +94,110 @@ Navigate to scripts folder and run:
 ```
 python3 convert_input_files.py --input_dir path/to/raw/xml/data --output_dir path/to/converted/json/compressed/output
 ```
+#### Customize input-file
+
+In order to define a corpus with a new data format you should:
+
+- add a new input_file_type to [INPUT_FILE_TYPES](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/__init__.py)
+- implement a class that inherits from [input_file.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/input_file.py).
+This class is customized to read a new data format. In our case-study we defined [delpher_kranten.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/delpher_kranten.py).
+
 
 ### 2. Filtering
-To be compeleted...
+In this step, you may select articles based on a filter or a collection of filters. Articles can be filtered by title, year, decade, or a set of keywords defined in the ```config.json``` file.
+```commandline
+ "filters": [
+     {
+       "type": "TitleFilter",
+       "title": "example"
+     },
+     {
+       "type": "YearFilter",
+       "year": 2022
+     },
+     {
+       "type": "DecadeFilter",
+       "decade": 1960
+     },
+     {
+       "type": "KeywordsFilter",
+       "keywords": ["sustainability", "green"]
+     }
+   ]
+ }
 
+```
+run the following to filter the articles:
+```commandline
+python3 scripts/step1_filter_articles.py --input-dir "path/to/converted/json/compressed/output/" --output-dir "output_filter/" --input-type "delpher_kranten" --glob "*.gz"
+```
+In our case, input-type is "delpher_kranten", and input data is a set of compresed json files with ```.gz``` extension.
+
+The output of this script is a JSON file for each selected article in the following format:
+```commandline
+{
+    "file_path": "output/transfered_data/00/KRANTEN_KBPERS01_000002100.json.gz",
+    "article_id": "5",
+    "Date": "1878-04-29",
+    "Title": "Opregte Haarlemsche Courant"
+}
+```
+### 3. Categorization by timestamp
+The output files generated in the previous step are categorized based on a specified [period-type](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/temporal_categorization/__init__.py), 
+such as ```year``` or ```decade```. This categorization is essential for subsequent steps, especially if you intend to apply tf-idf or other models to specific periods. In our case, we applied tf-idf per decade.
+
+```commandline
+python3 scripts/step2_categorize_by_timestamp.py --input-dir "output_filter/" --glob "*.json" --period-type "decade"  --output-dir "output_timestamped/"
+
+```
+The output consists of a .csv file for each period, such as one file per decade, containing the ```file_path``` and ```article_id``` of selected articles.
+
+### 4. Select final articles
+This step is applicable when articles are filtered (in step 2) using a set of keywords. 
+By utilizing tf-idf, the most relevant articles related to the specified topic (defined by the provided keywords) are selected.
+
+Before applying tf-idf, articles containing any of the specified keywords in their title are selected.
+
+From the rest of articles, to choose the most relevant ones, you can specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json):
+
+- Threshold for the tf-idf score value
+- Maximum number of selected articles with the top scores
+
+```commandline
+"article_selector":
+    {
+      "type": "threshold",
+      "value": "0.02"
+    },
+    
+    OR
+    
+   "article_selector":
+    {
+      "type": "num_articles",
+      "value": "200"
+    }, 
+```
+
+The following script, add a new column, ```selected``` to the .csv files from the previous step.
+```commandline
+python3 scripts/3_select_final_articles.py --input_dir "output/output_timestamped/"
+```
+
+### 5. Generate output
+As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs.
+This feature can be set in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json).
+```commandline
+"output_unit": "paragraph"
+
+OR
+
+"output_unit": "text"
+```
+
+```commandline
+python3 scripts/step4_generate_output.py --input_dir "output/output_timestamped/” --output-dir “output/output_results/“  --glob “*.csv”
+```
 ## About the Project
 **Date**: February 2024
 
