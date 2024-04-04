@@ -1,6 +1,6 @@
 # INTEREST
 
-The code in this repository implement a pipeline to extract specific articles from a large corpus.
+The code in this repository implements a pipeline to extract specific articles from a large corpus.
 
 Currently, this tool is tailored for the [Delpher Kranten](https://www.delpher.nl/nl/kranten) corpus, but it can be adapted for other corpora as well.
 
