@@ -29,7 +29,7 @@ if __name__ == "__main__":
         help="Glob pattern for find input files; e.g. '*.gz' ",
     )
     parser.add_argument(
-        "--config_path",
+        "--config-path",
         type=Path,
         default="config.json",
         help="File path of config file.",
