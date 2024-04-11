@@ -47,7 +47,8 @@ class ArticleSelector:
 
         elif self.config["type"] == "percentage":
             percentage = float(self.config["value"])
-            num_articles = int(len(self.similarity_scores) * (percentage / 100.0))
+            num_articles = int(len(self.similarity_scores) *
+                               (percentage / 100.0))
             selected_indices.extend(sorted_indices[:num_articles])
 
         return selected_indices
