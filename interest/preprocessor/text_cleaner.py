@@ -3,9 +3,26 @@ This module provides a TextCleaner class for preprocessing text
 data using various cleaning techniques.
 """
 import re
-# from typing import Optional
+from typing import Union, List
 from interest.settings import SPACY_MODEL
 from interest.utils import load_spacy_model
+
+
+def merge_texts_list(text: Union[str, List[str]]) -> str:
+    """
+    Merge a list of texts into a single string by joining them with spaces.
+
+    Args:
+        text (Union[str, List[str]]): The input text or list of texts to merge.
+
+    Returns:
+        str: The merged text if input is a list of strings, otherwise returns
+        the input text unchanged.
+    """
+    if isinstance(text, list):
+        merged_text = ' '.join(text)
+        return merged_text
+    return text
 
 
 class TextCleaner:
@@ -82,15 +99,12 @@ class TextCleaner:
         """Preprocess the given text using a series of cleaning steps.
 
         Args:
-            text (str): The text to preprocess.
+            text ( List[str]): The text to preprocess.
 
         Returns:
             str: The preprocessed text.
         """
-        self.text = text
-        # self.get_words()
-        # self.lower()
-        # self.remove_stopwords()
+        self.text = merge_texts_list(text)
         self.get_lower_lemma_tokens()
         self.remove_numeric()
         self.remove_extra_whitespace_tabs()
@@ -107,6 +121,7 @@ class TextCleaner:
         Returns:
             str: The cleaned text.
         """
+        self.text = merge_texts_list(text)
         self.text = text
         self.get_words()
         self.keep_standard_chars()

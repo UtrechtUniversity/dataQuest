@@ -10,8 +10,9 @@
   ],
   "article_selector":
     {
-      "type": "threshold",
-      "value": "0.02"
+      "type": "percentage",
+      "value": "30"
     },
-  "output_unit": "paragraph"
+  "output_unit": "segmented_text",
+  "sentences_per_segment": 10
 }

@@ -8,7 +8,7 @@ from interest.preprocessor.text_cleaner import TextCleaner
 text_cleaner = TextCleaner()
 
 
-def clean(text: str) -> str:
+def clean(text:  Union[str, List[str]]) -> str:
     """
     Clean the input text using TextCleaner.
 
@@ -47,13 +47,13 @@ class ArticleProcessor:
         self._body: Union[str, list, None] = ''
         self.selected: bool = False
 
-    def read_article_from_gzip(self, in_paragraph: bool = False) -> (
-            Tuple)[Union[str, None], Union[str, list, None]]:
+    def read_article_from_gzip(self) -> (
+            Tuple)[Union[str, None], Union[List[str], None]]:
         """
         Read article content from a gzip file.
 
         Returns:
-            Tuple[Union[str, None], Union[str, None]]: A tuple containing
+            Tuple[Union[str, None], Union[list, None]]: A tuple containing
             the title and body of the article.
         """
         try:
@@ -63,7 +63,7 @@ class ArticleProcessor:
                 article = articles.get(str(self._article_id), {})
                 title = article.get('title', {})
                 body = article.get('body', {})
-                return title, body if in_paragraph else " ".join(body)
+                return title, body
         except Exception as e:  # pylint: disable=broad-except
             logging.error("Error reading article %s from %s: %s",
                           str(self._article_id), self._file_path, e)
@@ -88,6 +88,5 @@ class ArticleProcessor:
         if title_with_keyword:
             self.selected = True
             return ""
-        if isinstance(self._body, str):
-            return clean(self._body)
-        return ""
+
+        return clean(self._body)
