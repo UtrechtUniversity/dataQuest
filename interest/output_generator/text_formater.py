@@ -2,7 +2,6 @@
 specified output units. """
 from typing import List, Union
 import logging
-from spacy.language import Language
 from interest.settings import SPACY_MODEL
 from interest.utils import load_spacy_model
 
