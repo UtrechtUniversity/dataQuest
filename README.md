@@ -161,11 +161,21 @@ Before applying tf-idf, articles containing any of the specified keywords in the
 
 From the rest of articles, to choose the most relevant ones, you can specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json):
 
-- Threshold for the tf-idf score value
-- Maximum number of selected articles with the top scores
+- Percentage of selected articles with the top scores
+- Maximum number of selected articles with the top scores 
+- Threshold for the value of cosine similarity between the embeddings of list of keywords and each article.
+
 
 ```commandline
-"article_selector":
+  "article_selector":
+    {
+      "type": "percentage",
+      "value": "30"
+    },
+    
+    OR
+  
+  "article_selector":
     {
       "type": "threshold",
       "value": "0.02"
@@ -186,14 +196,18 @@ python3 scripts/3_select_final_articles.py --input_dir "output/output_timestampe
 ```
 
 ### 5. Generate output
-As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs.
+As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs or a segmentation of the text.
 This feature can be set in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json).
 ```commandline
 "output_unit": "paragraph"
 
 OR
 
-"output_unit": "text"
+"output_unit": "full_text"
+
+OR
+"output_unit": "segmented_text"
+"sentences_per_segment": 10
 ```
 
 ```commandline
