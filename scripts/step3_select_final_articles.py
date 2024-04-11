@@ -5,8 +5,10 @@ from typing import List
 from pathlib import Path
 import pandas as pd
 from interest.utils import get_keywords_from_config
-from interest.utils import get_article_selector_from_config
+from interest.utils import read_config
 from interest.article_final_selection.process_articles import select_articles
+
+ARTICLE_SELECTOR_FIELD = "article_selector"
 
 
 def update_selected_indices_in_file(filepath: str,
@@ -42,7 +44,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Select final articles.")
 
     parser.add_argument(
-        "--input_dir",
+        "--input-dir",
         type=Path,
         required=True,
         help="Base directory for reading input files.",
@@ -54,7 +56,7 @@ if __name__ == "__main__":
         help="Glob pattern for find input files; e.g. '*.csv'.",
     )
     parser.add_argument(
-        "--config_path",
+        "--config-path",
         type=Path,
         default="config.json",
         help="File path of config file.",
@@ -66,8 +68,8 @@ if __name__ == "__main__":
         parser.error(f"Not a directory: '{str(args.input_dir.absolute())}'")
 
     keywords = get_keywords_from_config(args.config_path)
-    config_article_selector = get_article_selector_from_config(
-        args.config_path)
+    config_article_selector = read_config(
+        args.config_path, ARTICLE_SELECTOR_FIELD)
 
     if (len(keywords) > 0) and config_article_selector:
         for articles_filepath in args.input_dir.rglob(args.glob):
