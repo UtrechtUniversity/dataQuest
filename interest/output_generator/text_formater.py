@@ -1,10 +1,10 @@
 """ This module defines a TextFormatter class for formatting text based on
 specified output units. """
 from typing import List, Union
+import logging
 from spacy.language import Language
 from interest.settings import SPACY_MODEL
 from interest.utils import load_spacy_model
-import logging
 
 PARAGRAPH_FORMATTER = 'paragraph'
 FULLTEXT_FORMATTER = 'full_text'
@@ -16,7 +16,7 @@ class TextFormatter:
     """Class for formatting text based on specified output units. """
 
     def __init__(self, output_unit: str, sentences_per_segment: int,
-                 spacy_model: Union[str, Language] = SPACY_MODEL):
+                 spacy_model=SPACY_MODEL):  # : Union[str, Language]
         """
         Initializes the TextFormatter object.
 
@@ -39,7 +39,8 @@ class TextFormatter:
         self.is_fulltext = self._is_fulltext()
         self.texts: List[str] = []
 
-    def format_output(self, texts: Union[None, List[str]]) -> Union[str, List[str]]:
+    def format_output(self, texts: Union[None, List[str]]) -> (
+            Union)[str, List[str], None]:
         """
         Formats input texts based on the specified output unit.
 
@@ -72,6 +73,8 @@ class TextFormatter:
 
         except ValueError as e:
             logging.error("Unsupported formatter %s: %s", self.formatter, e)
+            return None
+        return None
 
     def _format_paragraph(self) -> List[str]:
         """Formats texts as a single paragraph.
