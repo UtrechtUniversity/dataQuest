@@ -47,7 +47,7 @@ class TextFormatter:
             texts (List[str]): List of input texts to be formatted.
 
         Returns:
-            Union[str, List[List[str]]]: Formatted output text based on the
+            Union[str, List[str], List[List[str]]]: Formatted output text based on the
             selected output_unit. For 'full_text', returns a single string.
             For 'paragraph' and 'segmented_text', returns a list of segmented
              text lists.
@@ -95,7 +95,7 @@ class TextFormatter:
         """Formats texts as segmented text based on sentences_per_segment.
 
         Returns:
-            List[str]: Flattened list of segmented text strings.
+             List[List[str]]: Flattened list of segmented text strings.
         """
         segmented_texts = []
         for text in self.texts:
