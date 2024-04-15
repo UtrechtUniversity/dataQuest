@@ -39,7 +39,7 @@ class TextFormatter:
         self.texts: List[str] = []
 
     def format_output(self, texts: Union[None, List[str]]) -> (
-            Union)[str, List[str],List[List[str]], None]:
+            Union)[str, List[str], List[List[str]], None]:
         """
         Formats input texts based on the specified output unit.
 
@@ -47,10 +47,10 @@ class TextFormatter:
             texts (List[str]): List of input texts to be formatted.
 
         Returns:
-            Union[str, List[str], List[List[str]]]: Formatted output text based on the
-            selected output_unit. For 'full_text', returns a single string.
-            For 'paragraph' and 'segmented_text', returns a list of segmented
-             text lists.
+            Union[str, List[str], List[List[str]]]: Formatted output text
+            based on the selected output_unit. For 'full_text', returns a
+            single string. For 'paragraph' and 'segmented_text', returns a
+            list of segmented text lists.
 
         Raises:
             ValueError: If input 'texts' is not a list of strings.
