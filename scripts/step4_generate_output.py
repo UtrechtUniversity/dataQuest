@@ -135,6 +135,8 @@ if __name__ == "__main__":
                                    spacy_model=SPACY_MODEL)
     for articles_filepath in args.input_dir.rglob(args.glob):
         df = find_articles_in_file(articles_filepath, text_formatter)
+        if df is None:
+            continue
         file_name = get_file_name_without_extension(articles_filepath)
-        df.to_csv(os.path.join(args.output_dir, 'articles_to_label_'+file_name+'.csv'), index = False)
-
+        df.to_csv(os.path.join(args.output_dir, 'articles_to_label_'
+                               + file_name+'.csv'), index=False)

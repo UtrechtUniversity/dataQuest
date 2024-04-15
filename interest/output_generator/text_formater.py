@@ -39,7 +39,7 @@ class TextFormatter:
         self.texts: List[str] = []
 
     def format_output(self, texts: Union[None, List[str]]) -> (
-            Union)[str, List[str], None]:
+            Union)[str, List[str],List[List[str]], None]:
         """
         Formats input texts based on the specified output unit.
 
@@ -91,7 +91,7 @@ class TextFormatter:
         """
         return '\n'.join(self.texts)
 
-    def _format_segmented_text(self) -> List[str]:
+    def _format_segmented_text(self) -> List[List[str]]:
         """Formats texts as segmented text based on sentences_per_segment.
 
         Returns:
@@ -104,7 +104,7 @@ class TextFormatter:
 
             for i in range(0, len(sentences), self.sentences_per_segment):
                 segment = sentences[i:i + self.sentences_per_segment]
-                segmented_texts.extend(segment)
+                segmented_texts.append(segment)
 
         return segmented_texts
 
