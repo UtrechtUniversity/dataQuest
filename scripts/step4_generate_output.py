@@ -20,6 +20,7 @@ ARTICLE_ID_FIELD = "article_id"
 BODY_FIELD = "body"
 LABEL_FIELD = "label"
 SELECTED_FIELD = "selected"
+DATE_FIELD = "date"
 
 OUTPUT_UNIT_KEY = "output_unit"
 SENTENCE_PER_SEGMENT_KEY = "sentences_per_segment"
@@ -40,10 +41,13 @@ def read_article(row: pd.Series, formatter: TextFormatter) -> DataFrame:
     file_path = row[FILE_PATH_FIELD]
     article_id = row[ARTICLE_ID_FIELD]
     article_processor = ArticleProcessor(file_path, article_id)
-    title, body = article_processor.read_article_from_gzip()
+    title, body, date = article_processor.read_article_from_gzip()
 
     body_formatted = formatter.format_output(body)
 
+    dates = [date] * len(body_formatted) \
+        if ((not formatter.is_fulltext) and body_formatted is not None) \
+        else [date]
     titles = [title] * len(body_formatted) \
         if ((not formatter.is_fulltext) and body_formatted is not None) \
         else [title]
@@ -57,6 +61,7 @@ def read_article(row: pd.Series, formatter: TextFormatter) -> DataFrame:
         if (not formatter.is_fulltext) and body_formatted is not None \
         else ['']
     return pd.DataFrame({FILE_PATH_FIELD: files_path,
+                         DATE_FIELD: dates,
                          ARTICLE_ID_FIELD: articles_id,
                          TITLE_FIELD: titles,
                          BODY_FIELD: body_formatted,
@@ -138,5 +143,5 @@ if __name__ == "__main__":
         if df is None:
             continue
         file_name = get_file_name_without_extension(articles_filepath)
-        df.to_csv(os.path.join(args.output_dir, 'articles_to_label_'
+        df.to_csv(os.path.join(args.output_dir, 'to_label_'
                                + file_name+'.csv'), index=False)
