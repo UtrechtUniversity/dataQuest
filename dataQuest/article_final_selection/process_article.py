@@ -3,7 +3,7 @@ import gzip
 import json
 import logging
 from typing import List, Union, Tuple
-from interest.preprocessor.text_cleaner import TextCleaner
+from dataQuest.preprocessor.text_cleaner import TextCleaner
 
 text_cleaner = TextCleaner()
 

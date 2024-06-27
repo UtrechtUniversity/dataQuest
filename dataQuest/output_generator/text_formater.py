@@ -2,8 +2,8 @@
 specified output units. """
 from typing import List, Union
 import logging
-from interest.settings import SPACY_MODEL
-from interest.utils import load_spacy_model
+from dataQuest.settings import SPACY_MODEL
+from dataQuest.utils import load_spacy_model
 
 PARAGRAPH_FORMATTER = 'paragraph'
 FULLTEXT_FORMATTER = 'full_text'

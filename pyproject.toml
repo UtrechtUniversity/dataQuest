@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "interest"
+name = "dataQuest"
 description = "A package to extract hystorical news sentiments"
 authors = [
     {name = "Shiva Nadi", email = "s.nadi@uu.nl"},
@@ -31,7 +31,7 @@ lint = ["flake8"]
 test = ["pytest", "mypy"]
 
 [tool.setuptools]
-packages = ["interest"]
+packages = ["dataQuest"]
 
 [tool.flake8]
 max-line-length = 99

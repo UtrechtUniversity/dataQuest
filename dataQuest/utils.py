@@ -8,13 +8,13 @@ from functools import cache
 import json
 import spacy
 import spacy.cli
-from interest.filter.document_filter import (YearFilter,
-                                             TitleFilter,
-                                             DocumentFilter)
-from interest.filter.document_filter import (CompoundFilter,
-                                             DecadeFilter,
-                                             KeywordsFilter)
-from interest.settings import ENCODING
+from dataQuest.filter.document_filter import (YearFilter,
+                                              TitleFilter,
+                                              DocumentFilter)
+from dataQuest.filter.document_filter import (CompoundFilter,
+                                              DecadeFilter,
+                                              KeywordsFilter)
+from dataQuest.settings import ENCODING
 
 
 @cache

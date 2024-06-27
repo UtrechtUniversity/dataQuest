@@ -6,9 +6,9 @@ import warnings
 import scipy
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from interest.models.base import BaseEmbedder
-from interest.utils import load_spacy_model
-from interest.settings import SPACY_MODEL
+from dataQuest.models.base import BaseEmbedder
+from dataQuest.utils import load_spacy_model
+from dataQuest.settings import SPACY_MODEL
 
 
 class TfidfEmbedder(BaseEmbedder):

@@ -1,4 +1,4 @@
-# INTEREST
+# dataQuest
 
 The code in this repository implements a pipeline to extract specific articles from a large corpus.
 
@@ -10,7 +10,7 @@ Articles can be filtered based on individual or multiple features such as title,
 ## Getting Started
 Clone this repository to your working station to obtain examples and python scripts:
 ```
-git clone https://github.com/UtrechtUniversity/historical-news-sentiment.git
+git clone https://github.com/UtrechtUniversity/dataQuest.git
 ```
 
 ### Prerequisites
@@ -20,10 +20,10 @@ To install and run this project you need to have the following prerequisites ins
 ```
 
 ### Installation
-#### Option 1 - Install interest package
-To run the project, ensure to install the interest package that is part of this project.
+#### Option 1 - Install dataQuest package
+To run the project, ensure to install the dataQuest package that is part of this project.
 ```
-pip install interest
+pip install dataQuest
 ```
 #### Option 2 - Run from source code
 If you want to run the scripts without installation you need to:  
@@ -42,7 +42,7 @@ pip install .
 On Linux and Mac OS, you might have to set the PYTHONPATH environment variable to point to this directory.
 
 ```commandline
-export PYTHONPATH="current working directory/historical-news-sentiment:${PYTHONPATH}"
+export PYTHONPATH="current working directory/dataQuest:${PYTHONPATH}"
 ```
 ### Built with
 These packages are automatically installed in the step above:
@@ -85,7 +85,7 @@ Below is a snapshot of the JSON file format:
 
 In our use case, the harvested KB data is in XML format. We have provided the following script to transform the original data into the expected format.
 ```
-from interest.preprocessor.parser import XMLExtractor
+from dataQuest.preprocessor.parser import XMLExtractor
 
 extractor = XMLExtractor(Path(input_dir), Path(output_dir))
 extractor.extract_xml_string()
@@ -99,9 +99,9 @@ python3 convert_input_files.py --input_dir path/to/raw/xml/data --output_dir pat
 
 In order to define a corpus with a new data format you should:
 
-- add a new input_file_type to [INPUT_FILE_TYPES](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/__init__.py)
-- implement a class that inherits from [input_file.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/input_file.py).
-This class is customized to read a new data format. In our case-study we defined [delpher_kranten.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/filter/delpher_kranten.py).
+- add a new input_file_type to [INPUT_FILE_TYPES](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/__init__.py)
+- implement a class that inherits from [input_file.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/input_file.py).
+This class is customized to read a new data format. In our case-study we defined [delpher_kranten.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/delpher_kranten.py).
 
 
 ### 2. Filtering
@@ -144,7 +144,7 @@ The output of this script is a JSON file for each selected article in the follow
 }
 ```
 ### 3. Categorization by timestamp
-The output files generated in the previous step are categorized based on a specified [period-type](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/interest/temporal_categorization/__init__.py), 
+The output files generated in the previous step are categorized based on a specified [period-type](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/temporal_categorization/__init__.py), 
 such as ```year``` or ```decade```. This categorization is essential for subsequent steps, especially if you intend to apply tf-idf or other models to specific periods. In our case, we applied tf-idf per decade.
 
 ```commandline
@@ -159,7 +159,7 @@ By utilizing tf-idf, the most relevant articles related to the specified topic (
 
 Before applying tf-idf, articles containing any of the specified keywords in their title are selected.
 
-From the rest of articles, to choose the most relevant ones, you can specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json):
+From the rest of articles, to choose the most relevant ones, you can specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json):
 
 - Percentage of selected articles with the top scores
 - Maximum number of selected articles with the top scores 
@@ -192,12 +192,12 @@ From the rest of articles, to choose the most relevant ones, you can specify one
 
 The following script, add a new column, ```selected``` to the .csv files from the previous step.
 ```commandline
-python3 scripts/3_select_final_articles.py --input_dir "output/output_timestamped/"
+python3 scripts/step3_select_final_articles.py --input-dir "output/output_timestamped/"
 ```
 
 ### 5. Generate output
 As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs or a segmentation of the text.
-This feature can be set in [config.py](https://github.com/UtrechtUniversity/historical-news-sentiment/blob/main/config.json).
+This feature can be set in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json).
 ```commandline
 "output_unit": "paragraph"
 
@@ -211,7 +211,7 @@ OR
 ```
 
 ```commandline
-python3 scripts/step4_generate_output.py --input_dir "output/output_timestamped/” --output-dir “output/output_results/“  --glob “*.csv”
+python3 scripts/step4_generate_output.py --input-dir "output/output_timestamped/” --output-dir “output/output_results/“  --glob “*.csv”
 ```
 ## About the Project
 **Date**: February 2024
@@ -248,5 +248,5 @@ To contribute:
 
 Pim Huijnen - p.huijnen@uu.nl
 
-Project Link: [https://github.com/UtrechtUniversity/historical-news-sentiment](https://github.com/UtrechtUniversity/historical-news-sentiment)
+Project Link: [https://github.com/UtrechtUniversity/dataQuest](https://github.com/UtrechtUniversity/dataQuest)
 

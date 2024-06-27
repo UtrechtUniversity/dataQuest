@@ -9,10 +9,10 @@ from typing import Iterable
 
 from tqdm import tqdm
 
-from interest.filter import INPUT_FILE_TYPES
-from interest.filter.input_file import InputFile
-from interest.utils import load_filters_from_config
-from interest.utils import save_filtered_articles
+from dataQuest.filter import INPUT_FILE_TYPES
+from dataQuest.filter.input_file import InputFile
+from dataQuest.utils import load_filters_from_config
+from dataQuest.utils import save_filtered_articles
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Filter articles from input files.")

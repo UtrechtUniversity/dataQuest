@@ -5,10 +5,10 @@ and similarity scores.
 from typing import List, Tuple, Dict, Union
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
-from interest.models.tfidf import TfidfEmbedder
-from interest.article_final_selection.process_article import ArticleProcessor
-from interest.article_final_selection.process_article import clean
-from interest.article_final_selection.article_selector import ArticleSelector
+from dataQuest.models.tfidf import TfidfEmbedder
+from dataQuest.article_final_selection.process_article import ArticleProcessor
+from dataQuest.article_final_selection.process_article import clean
+from dataQuest.article_final_selection.article_selector import ArticleSelector
 
 
 def process_articles(articles_filepath: str, clean_keywords: List[str]) -> (

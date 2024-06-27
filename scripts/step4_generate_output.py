@@ -7,11 +7,11 @@ from pathlib import Path
 from typing import Union
 import pandas as pd
 from pandas import DataFrame
-from interest.settings import SPACY_MODEL
-from interest.article_final_selection.process_article import ArticleProcessor
-from interest.utils import read_config, get_file_name_without_extension
-from interest.output_generator.text_formater import (TextFormatter,
-                                                     SEGMENTED_TEXT_FORMATTER)
+from dataQuest.settings import SPACY_MODEL
+from dataQuest.article_final_selection.process_article import ArticleProcessor
+from dataQuest.utils import read_config, get_file_name_without_extension
+from dataQuest.output_generator.text_formater import (TextFormatter,
+                                                      SEGMENTED_TEXT_FORMATTER)
 
 
 FILE_PATH_FIELD = "file_path"

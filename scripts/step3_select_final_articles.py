@@ -4,9 +4,9 @@ import logging
 from typing import List
 from pathlib import Path
 import pandas as pd
-from interest.utils import get_keywords_from_config
-from interest.utils import read_config
-from interest.article_final_selection.process_articles import select_articles
+from dataQuest.utils import get_keywords_from_config
+from dataQuest.utils import read_config
+from dataQuest.article_final_selection.process_articles import select_articles
 
 ARTICLE_SELECTOR_FIELD = "article_selector"
 

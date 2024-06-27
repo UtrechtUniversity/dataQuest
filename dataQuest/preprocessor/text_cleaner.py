@@ -4,8 +4,8 @@ data using various cleaning techniques.
 """
 import re
 from typing import Union, List
-from interest.settings import SPACY_MODEL
-from interest.utils import load_spacy_model
+from dataQuest.settings import SPACY_MODEL
+from dataQuest.utils import load_spacy_model
 
 
 def merge_texts_list(text: Union[str, List[str]]) -> str:

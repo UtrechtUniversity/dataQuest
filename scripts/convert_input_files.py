@@ -1,4 +1,4 @@
-from interest.preprocessor.parser import XMLExtractor
+from dataQuest.preprocessor.parser import XMLExtractor
 from argparse import ArgumentParser
 from pathlib import Path
 import logging

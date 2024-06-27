@@ -9,8 +9,8 @@ from typing import Iterable
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm  # type: ignore
-from interest.temporal_categorization import PERIOD_TYPES
-from interest.temporal_categorization.timestamped_data import TimestampedData
+from dataQuest.temporal_categorization import PERIOD_TYPES
+from dataQuest.temporal_categorization.timestamped_data import TimestampedData
 
 OUTPUT_FILE_NAME = 'articles'
 FILENAME_COLUMN = 'file_path'

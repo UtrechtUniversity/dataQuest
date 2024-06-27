@@ -8,8 +8,8 @@ import json
 import logging
 import os
 from typing import Optional
-from interest.filter.document import Document, Article
-from interest.filter.input_file import InputFile
+from dataQuest.filter.document import Document, Article
+from dataQuest.filter.input_file import InputFile
 
 
 class KrantenFile(InputFile):
