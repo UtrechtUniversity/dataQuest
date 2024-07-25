@@ -11,9 +11,13 @@ import spacy.cli
 from dataQuest.filter.document_filter import (YearFilter,
                                               TitleFilter,
                                               DocumentFilter)
-from dataQuest.filter.document_filter import (CompoundFilter,
+
+from dataQuest.filter.document_filter import (AndFilter,
+                                              OrFilter,
+                                              NotFilter,
                                               DecadeFilter,
-                                              KeywordsFilter)
+                                              KeywordsFilter,
+                                              ArticleTitleFilter)
 from dataQuest.settings import ENCODING
 
 
@@ -44,7 +48,43 @@ def load_spacy_model(model_name: str, retry: bool = True) \
     return nlp
 
 
-def load_filters_from_config(config_file: Path) -> CompoundFilter:
+def create_filter(filter_config: Dict[str, Any]) -> DocumentFilter:
+    """
+    Factory function to create filters based on configuration.
+
+    Args:
+        filter_config (Dict[str, Any]): The filter configuration.
+
+    Returns:
+        DocumentFilter: The created filter instance.
+    """
+    filter_type = filter_config.get('type')
+
+    if filter_type == 'TitleFilter':
+        return TitleFilter(filter_config['title'])
+    if filter_type == 'YearFilter':
+        start_year = filter_config['start_year']
+        end_year = filter_config['end_year']
+        return YearFilter(start_year, end_year)
+    if filter_type == 'DecadeFilter':
+        return DecadeFilter(filter_config['decade'])
+    if filter_type == 'KeywordsFilter':
+        return KeywordsFilter(filter_config['keywords'])
+    if filter_type == 'ArticleTitleFilter':
+        return ArticleTitleFilter(filter_config['article_title'])
+    if filter_type == 'AndFilter':
+        return AndFilter([create_filter(f) for f in filter_config['filters']])
+    if filter_type == 'OrFilter':
+        return OrFilter([create_filter(f) for f in filter_config['filters']])
+    if filter_type == 'NotFilter':
+        inner_filter = create_filter(filter_config['filter'])
+        level = filter_config.get('level', 'both')
+        return NotFilter(inner_filter, level)
+
+    raise ValueError(f"Unknown filter type: {filter_type}")
+
+
+def load_filters_from_config(config_file: Path) -> AndFilter:
     """Load document filters from a configuration file.
 
     Args:
@@ -58,19 +98,9 @@ def load_filters_from_config(config_file: Path) -> CompoundFilter:
     with open(config_file, 'r', encoding=ENCODING) as f:
         config: Dict[str, List[Dict[str, Any]]] = json.load(f)
 
-    filters: List[DocumentFilter] = []
-    for filter_config in config['filters']:
-        filter_type = filter_config['type']
-        if filter_type == 'TitleFilter':
-            filters.append(TitleFilter(filter_config['title']))
-        elif filter_type == 'YearFilter':
-            filters.append(YearFilter(filter_config['year']))
-        elif filter_type == 'DecadeFilter':
-            filters.append(DecadeFilter(filter_config['decade']))
-        elif filter_type == 'KeywordsFilter':
-            filters.append(KeywordsFilter(filter_config['keywords']))
-
-    return CompoundFilter(filters)
+    filters = [create_filter(filter_config) for filter_config in config['filters']]
+    compound_filter = AndFilter(filters)
+    return compound_filter
 
 
 def get_keywords_from_config(config_file: Path) -> List[str]:
@@ -152,7 +182,9 @@ def save_filtered_articles(input_file: Any, article_id: str,
         "Title": input_file.doc().title,
     }
 
-    output_fp = os.path.join(output_dir, input_file.base_file_name() + '.json')
+    output_fp = os.path.join(output_dir, input_file.base_file_name() + '_' +
+                             str(article_id) + '.json')
+
     print('output_fp', output_fp)
     with open(output_fp, "w", encoding=ENCODING) as json_file:
         json.dump(data, json_file, indent=4)

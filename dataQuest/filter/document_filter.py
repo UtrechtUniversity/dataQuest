@@ -74,26 +74,34 @@ class TitleFilter(DocumentFilter):
 
 class YearFilter(DocumentFilter):
     """
-       Filter documents by year.
+    Filter documents by a range of years.
 
-       Attributes:
-           year (int): The year to filter by.
+    Attributes:
+        start_year (int): The start year of the range.
+        end_year (int): The end year of the range.
     """
-    def __init__(self, year: int):
-        self.year = year
+    def __init__(self, start_year: int, end_year: int):
+        self.start_year = start_year
+        self.end_year = end_year
 
     def filter_document(self, document: Document) -> bool:
         """
-                Filter documents by year.
+        Filter documents by a range of years.
 
-                Args:
-                    document (Document): The document to be filtered.
+        Args:
+            document (Document): The document to be filtered.
 
-                Returns:
-                    bool: True if the document's year matches the specified
-                    year, False otherwise.
+        Returns:
+            bool: True if the document's year is within the specified range,
+            False otherwise.
         """
-        return document.year == self.year
+        if document.year is None:
+            return False
+        if self.start_year is not None and document.year < self.start_year:
+            return False
+        if self.end_year is not None and document.year > self.end_year:
+            return False
+        return True
 
 
 class DecadeFilter(DocumentFilter):
@@ -157,52 +165,96 @@ class KeywordsFilter(DocumentFilter):
                    keyword in self.keywords)
 
 
-class CompoundFilter(DocumentFilter):
+class ArticleTitleFilter(DocumentFilter):
     """
-        Compound filter combining multiple filters.
+        Filter documents and articles by article title.
 
         Attributes:
-            filters (List[DocumentFilter]): The list of filters to apply.
+            article_title (str): The article title to filter by.
     """
-    def __init__(self, filters: List[DocumentFilter]):
-        self.filters = filters
+    def __init__(self, article_title: str):
+        self.article_title = article_title
 
     def filter_document(self, document: Document) -> bool:
         """
-                Filter documents by applying all filters.
+                Filter documents by article title.
 
                 Args:
                     document (Document): The document to be filtered.
 
                 Returns:
-                    bool: True if the document passes all filters,
-                    False otherwise.
+                    bool: Always returns True.
         """
-        return all(filter_.filter_document(document)
-                   for filter_ in self.filters)
+        return True
 
     def filter_article(self, article: Article) -> bool:
         """
-                Filter articles by applying all filters.
+                Filter articles by keywords.
 
                 Args:
                     article (Article): The article to be filtered.
 
                 Returns:
-                    bool: True if the article passes all filters,
-                    False otherwise.
+                    bool: True if the article's title or text contains any
+                    of the specified keywords, False otherwise.
         """
+        return self.article_title in article.title
+
+
+class AndFilter(DocumentFilter):
+    """
+    Logical AND filter combining multiple filters.
+
+    Attributes:
+        filters (List[DocumentFilter]): The list of filters to apply.
+    """
+    def __init__(self, filters: List[DocumentFilter]):
+        self.filters = filters
+
+    def filter_document(self, document: Document) -> bool:
+        return all(filter_.filter_document(document) for filter_ in self.filters)
+
+    def filter_article(self, article: Article) -> bool:
         return all(filter_.filter_article(article) for filter_ in self.filters)
 
-    def include_keyword_filter(self) -> bool:
-        """
-                Check if the compound filter includes a KeywordsFilter.
 
-                Returns:
-                    bool: True if the compound filter includes a
-                    KeywordsFilter, False otherwise.
-        """
-        for filter_ in self.filters:
-            if isinstance(filter_, KeywordsFilter):
-                return True
-        return False
+class OrFilter(DocumentFilter):
+    """
+    Logical OR filter combining multiple filters.
+
+    Attributes:
+        filters (List[DocumentFilter]): The list of filters to apply.
+    """
+    def __init__(self, filters: List[DocumentFilter]):
+        self.filters = filters
+
+    def filter_document(self, document: Document) -> bool:
+        return any(filter_.filter_document(document) for filter_ in self.filters)
+
+    def filter_article(self, article: Article) -> bool:
+        return any(filter_.filter_article(article) for filter_ in self.filters)
+
+
+class NotFilter(DocumentFilter):
+    """
+    Logical NOT filter to negate a filter's result.
+
+    Attributes:
+        filter (DocumentFilter): The filter to negate.
+        level (str): The level at which to apply the filter ('document', 'article', or 'both').
+    """
+    def __init__(self, _filter: DocumentFilter, level: str = 'both'):
+        self.filter = _filter
+        self.level = level
+
+    def filter_document(self, document: Document) -> bool:
+        if self.level in ('document', 'both'):
+            result = not self.filter.filter_document(document)
+            return result
+        return True
+
+    def filter_article(self, article: Article) -> bool:
+        if self.level in ('article', 'both'):
+            result = not self.filter.filter_article(article)
+            return result
+        return True

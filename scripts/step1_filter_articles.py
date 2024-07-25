@@ -60,10 +60,9 @@ if __name__ == "__main__":
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     compound_filter = load_filters_from_config(args.config_path)
-    with_keyword_filter = compound_filter.include_keyword_filter()
 
     for input_file in tqdm(input_files, desc="Filtering articles",
                            unit="file"):
         for article in input_file.selected_articles(compound_filter):
             save_filtered_articles(input_file, article.id,
-            args.output_dir)
+                                   args.output_dir)
