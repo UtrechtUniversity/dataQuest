@@ -11,6 +11,7 @@ import spacy.cli
 from dataQuest.filter.document_filter import (YearFilter,
                                               TitleFilter,
                                               DocumentFilter)
+
 from dataQuest.filter.document_filter import (AndFilter,
                                               OrFilter,
                                               NotFilter,
@@ -101,7 +102,6 @@ def load_filters_from_config(config_file: Path) -> AndFilter:
     compound_filter = AndFilter(filters)
     return compound_filter
 
-
 def get_keywords_from_config(config_file: Path) -> List[str]:
     """
         Extract keywords from a JSON configuration file.
@@ -183,6 +183,7 @@ def save_filtered_articles(input_file: Any, article_id: str,
 
     output_fp = os.path.join(output_dir, input_file.base_file_name() + '_' +
                              str(article_id) + '.json')
+
     print('output_fp', output_fp)
     with open(output_fp, "w", encoding=ENCODING) as json_file:
         json.dump(data, json_file, indent=4)

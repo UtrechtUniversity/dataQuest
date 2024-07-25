@@ -103,7 +103,6 @@ class YearFilter(DocumentFilter):
             return False
         return True
 
-
 class DecadeFilter(DocumentFilter):
     """
         Filter documents by decade.
