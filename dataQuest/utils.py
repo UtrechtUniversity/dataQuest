@@ -102,6 +102,7 @@ def load_filters_from_config(config_file: Path) -> AndFilter:
     compound_filter = AndFilter(filters)
     return compound_filter
 
+
 def get_keywords_from_config(config_file: Path) -> List[str]:
     """
         Extract keywords from a JSON configuration file.

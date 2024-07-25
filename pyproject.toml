@@ -23,7 +23,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 
-dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy","scikit-learn","numpy","scipy"
+dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy","scikit-learn","numpy","scipy",
+    "flake8-pyproject"
 ]
 
 [project.optional-dependencies]
