@@ -23,7 +23,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 
-dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy","scikit-learn","numpy","scipy"
+dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy","scikit-learn","numpy","scipy",
+    "flake8-pyproject"
 ]
 
 [project.optional-dependencies]
@@ -40,6 +41,9 @@ max-line-length = 99
 max-line-length=100
 max-locals=35
 max-args=10
+disable = [
+    "R0911"
+]
 
 [[tool.mypy.overrides]]
 module = [

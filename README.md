@@ -108,24 +108,38 @@ This class is customized to read a new data format. In our case-study we defined
 In this step, you may select articles based on a filter or a collection of filters. Articles can be filtered by title, year, decade, or a set of keywords defined in the ```config.json``` file.
 ```commandline
  "filters": [
-     {
-       "type": "TitleFilter",
-       "title": "example"
-     },
-     {
-       "type": "YearFilter",
-       "year": 2022
-     },
-     {
-       "type": "DecadeFilter",
-       "decade": 1960
-     },
-     {
-       "type": "KeywordsFilter",
-       "keywords": ["sustainability", "green"]
-     }
-   ]
- }
+        {
+            "type": "AndFilter",
+            "filters": [
+                {
+                    "type": "OrFilter",
+                    "filters": [
+                        {
+                            "type": "YearFilter",
+                            "start_year": 1800,
+                            "end_year": 1910
+                        },
+                        {
+                            "type": "DecadeFilter",
+                            "decade": 1960
+                        }
+                    ]
+                },
+                {
+                    "type": "NotFilter",
+                    "filter": {
+                        "type": "ArticleTitleFilter",
+                        "article_title": "Advertentie"
+                    },
+                    "level": "article"
+                },
+                {
+                    "type": "KeywordsFilter",
+                    "keywords": ["sustainability", "green"]
+                }
+            ]
+        }
+    ]
 
 ```
 run the following to filter the articles:
