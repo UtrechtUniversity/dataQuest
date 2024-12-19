@@ -4,8 +4,9 @@ data using various cleaning techniques.
 """
 import re
 from typing import Union, List
+from spacy.language import Language
 from dataQuest.settings import SPACY_MODEL
-from dataQuest.utils import load_spacy_model
+from dataQuest.utils import initialize_nlp
 
 
 def merge_texts_list(text: Union[str, List[str]]) -> str:
@@ -29,7 +30,7 @@ class TextCleaner:
     """A class for cleaning text data using various preprocessing
        techniques."""
 
-    def __init__(self, spacy_model=SPACY_MODEL) -> None:
+    def __init__(self, spacy_model: Union[str, Language] = SPACY_MODEL) -> None:
         """Initialize the TextCleaner instance.
 
         Args:
@@ -37,12 +38,7 @@ class TextCleaner:
                         model to use for text processing.
                         Defaults to the model specified in the settings.
         """
-
-        self.nlp = (
-            load_spacy_model(spacy_model)
-            if isinstance(spacy_model, str)
-            else spacy_model
-        )
+        self.nlp: Language = initialize_nlp(spacy_model)
         self.stopword_list = self.nlp.Defaults.stop_words
         self.stopwords = set(self.stopword_list)
         self.text = ""

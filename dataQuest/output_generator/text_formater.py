@@ -2,8 +2,8 @@
 specified output units. """
 from typing import List, Union
 import logging
-from dataQuest.settings import SPACY_MODEL
-from dataQuest.utils import load_spacy_model
+from spacy.language import Language
+from dataQuest.utils import initialize_nlp
 
 PARAGRAPH_FORMATTER = 'paragraph'
 FULLTEXT_FORMATTER = 'full_text'
@@ -15,24 +15,23 @@ class TextFormatter:
     """Class for formatting text based on specified output units. """
 
     def __init__(self, output_unit: str, sentences_per_segment: int,
-                 spacy_model=SPACY_MODEL):  # : Union[str, Language]
+                 spacy_model: Union[str, Language]) -> None:
         """
-        Initializes the TextFormatter object.
+            Initializes the TextFormatter object.
 
-        Args:
-            output_unit (str): The type of output unit ('paragraph',
-             'full_text', 'segmented_text').
-            sentences_per_segment (int): Number of sentences per
-            segment when output_unit is 'segmented_text'.
-            spacy_model (Union[str, Language], optional): Spacy model
-             or model name used for text processing. Defaults to the global
-             SPACY_MODEL value.
+            Args:
+                output_unit (str): The type of output unit ('paragraph',
+                 'full_text', 'segmented_text').
+                sentences_per_segment (int): Number of sentences per
+                segment when output_unit is 'segmented_text'.
+                spacy_model (Union[str, Language], optional): Spacy model
+                 or model name used for text processing. Defaults to the global
+                 SPACY_MODEL value.
         """
-        self.nlp = (
-            load_spacy_model(spacy_model)
-            if isinstance(spacy_model, str)
-            else spacy_model
-        )
+        self.nlp: Language = initialize_nlp(spacy_model)
+        if not callable(self.nlp):
+            raise ValueError("Failed to initialize SpaCy NLP pipeline.")
+
         self.sentences_per_segment = sentences_per_segment
         self.formatter = output_unit
         self.is_fulltext = self._is_fulltext()
@@ -97,6 +96,9 @@ class TextFormatter:
         Returns:
              List[List[str]]: Flattened list of segmented text strings.
         """
+        if not callable(self.nlp):
+            raise ValueError("SpaCy NLP pipeline (self.nlp) is not initialized or invalid.")
+
         segmented_texts = []
         for text in self.texts:
             doc = self.nlp(text)

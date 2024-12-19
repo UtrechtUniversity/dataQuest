@@ -3,11 +3,12 @@ Module containing utility functions for the project.
 """
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from functools import cache
 import json
 import spacy
 import spacy.cli
+from spacy.language import Language
 from dataQuest.filter.document_filter import (YearFilter,
                                               TitleFilter,
                                               DocumentFilter)
@@ -204,3 +205,15 @@ def get_file_name_without_extension(full_path: str) -> str:
     base_name = os.path.basename(full_path)
     file_name_without_ext = os.path.splitext(base_name)[0]
     return file_name_without_ext
+
+
+def initialize_nlp(spacy_model: Union[str, Language]) -> Language:
+    """Initialize the SpaCy model."""
+    if isinstance(spacy_model, str):
+        model = load_spacy_model(spacy_model)
+        if not isinstance(model, Language):
+            raise ValueError(f"Loaded SpaCy model is not a Language instance: {spacy_model}")
+        return model
+    if isinstance(spacy_model, Language):
+        return spacy_model
+    raise ValueError("Invalid spacy_model. It must be a string or a SpaCy Language instance.")

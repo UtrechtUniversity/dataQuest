@@ -4,11 +4,12 @@ from typing import Sequence, Union, Optional
 import warnings
 
 import scipy
+from spacy.language import Language
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from dataQuest.models.base import BaseEmbedder
-from dataQuest.utils import load_spacy_model
 from dataQuest.settings import SPACY_MODEL
+from dataQuest.models.base import BaseEmbedder
+from dataQuest.utils import initialize_nlp
 
 
 class TfidfEmbedder(BaseEmbedder):
@@ -35,13 +36,12 @@ class TfidfEmbedder(BaseEmbedder):
     def __init__(
             self, ngram_max: int = 1, norm: Optional[str] = "l1",
             sublinear_tf: bool = False, min_df: int = 1,
-            max_df: float = 1.0, spacy_model=SPACY_MODEL):
-        """Initialize the TF-IDF embedder."""
-        self.nlp = (
-            load_spacy_model(spacy_model)
-            if isinstance(spacy_model, str)
-            else spacy_model
-        )
+            max_df: float = 1.0, spacy_model: Union[str, Language] = SPACY_MODEL) -> None:
+
+        self.nlp: Language = initialize_nlp(spacy_model)
+        if not callable(self.nlp):
+            raise ValueError("Failed to initialize SpaCy NLP pipeline.")
+
         self.stopword_list = self.nlp.Defaults.stop_words
         self.stop_words = list(self.stopword_list)
         self.ngram_max = ngram_max
