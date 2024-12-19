@@ -4,6 +4,7 @@ import logging
 from typing import List
 from pathlib import Path
 import pandas as pd
+from tqdm import tqdm  # type: ignore
 from dataQuest.utils import get_keywords_from_config
 from dataQuest.utils import read_config
 from dataQuest.article_final_selection.process_articles import select_articles
@@ -72,7 +73,8 @@ if __name__ == "__main__":
         args.config_path, ARTICLE_SELECTOR_FIELD)
 
     if (len(keywords) > 0) and config_article_selector:
-        for articles_filepath in args.input_dir.rglob(args.glob):
+        for articles_filepath in tqdm(args.input_dir.rglob(args.glob),
+                                      desc="Processing articles", unit="file"):
             selected_indices = select_articles(articles_filepath, keywords,
                                                config_article_selector)
             update_selected_indices_in_file(articles_filepath,
