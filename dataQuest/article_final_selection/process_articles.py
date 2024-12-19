@@ -3,6 +3,7 @@ This module contains functions for selecting articles based on keywords
 and similarity scores.
 """
 from typing import List, Tuple, Dict, Union
+import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from dataQuest.models.tfidf import TfidfEmbedder
@@ -51,13 +52,15 @@ def apply_tfidf_similarity(documents: List[str], keywords: List[str]) -> (
     Returns:
         List[float]: A list of similarity scores.
     """
-    model = TfidfEmbedder(ngram_max=1, norm="l1", sublinear_tf=False, min_df=1,
+    model = TfidfEmbedder(ngram_max=1, norm="l2", sublinear_tf=False, min_df=1,
                           max_df=1.0)
     keywords_list = [" ".join(keywords)]
     model.fit(documents)
     embeddings_documents = model.transform(documents).tocsr()
     embeddings_keywords = model.transform(keywords_list).tocsr()
-    similarity_scores = cosine_similarity(embeddings_keywords,
+    avg_keywords_embedding = embeddings_keywords.mean(axis=0)
+    avg_keywords_embedding = np.asarray(avg_keywords_embedding).flatten()
+    similarity_scores = cosine_similarity([avg_keywords_embedding],
                                           embeddings_documents)
     return similarity_scores[0]
 
