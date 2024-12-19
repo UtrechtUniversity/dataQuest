@@ -62,8 +62,11 @@ class TfidfEmbedder(BaseEmbedder):
         Args:
             documents (Sequence[str]): A sequence of document strings.
         """
+        if len(documents) == 0:
+            raise ValueError("The documents list cannot be empty.")
+
         min_df = min(self.min_df, len(documents))
-        max_df = max(min_df/len(documents), self.max_df)
+        max_df = max(min_df / len(documents) if len(documents) > 0 else 1, self.max_df)
 
         def _tokenizer(text):
             doc = self.nlp(text)
