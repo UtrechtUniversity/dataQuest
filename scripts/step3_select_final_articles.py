@@ -41,7 +41,45 @@ def update_selected_indices_in_file(filepath: str,
                       e)
 
 
-if __name__ == "__main__":
+def select_final_articles(
+    input_dir: Path,
+    glob_pattern: str,
+    config_path: Path,
+):
+    """
+    Core functionality to select final articles based on keywords and configuration.
+
+    Args:
+        input_dir (Path): Directory containing input files.
+        glob_pattern (str): Glob pattern to match input files (e.g., '*.csv').
+        config_path (Path): Path to the configuration file.
+    """
+    if not input_dir.is_dir():
+        raise ValueError(f"Not a directory: '{str(input_dir.absolute())}'")
+
+    keywords = get_keywords_from_config(config_path)
+    config_article_selector = read_config(config_path, ARTICLE_SELECTOR_FIELD)
+
+    if len(keywords) > 0 and config_article_selector:
+        for articles_filepath in tqdm(
+            input_dir.rglob(glob_pattern),
+            desc="Processing articles",
+            unit="file",
+        ):
+            try:
+                selected_indices = select_articles(
+                    str(articles_filepath), keywords, config_article_selector
+                )
+
+                update_selected_indices_in_file(str(articles_filepath), selected_indices)
+            except Exception as e:  # pylint: disable=broad-except
+                logging.error("Error processing file %s: %s", articles_filepath, str(e))
+
+
+def cli():
+    """
+        Command-line interface for selecting final articles.
+    """
     parser = argparse.ArgumentParser("Select final articles.")
 
     parser.add_argument(
@@ -65,17 +103,17 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.input_dir.is_dir():
-        parser.error(f"Not a directory: '{str(args.input_dir.absolute())}'")
+    try:
+        select_final_articles(
+            input_dir=args.input_dir,
+            glob_pattern=args.glob,
+            config_path=args.config_path,
+        )
+    except ValueError as e:
+        parser.error(str(e))
+    except Exception as e:  # pylint: disable=broad-except
+        logging.error("Error occurred in CLI: %s", str(e))
 
-    keywords = get_keywords_from_config(args.config_path)
-    config_article_selector = read_config(
-        args.config_path, ARTICLE_SELECTOR_FIELD)
 
-    if (len(keywords) > 0) and config_article_selector:
-        for articles_filepath in tqdm(args.input_dir.rglob(args.glob),
-                                      desc="Processing articles", unit="file"):
-            selected_indices = select_articles(articles_filepath, keywords,
-                                               config_article_selector)
-            update_selected_indices_in_file(articles_filepath,
-                                            selected_indices)
+if __name__ == "__main__":
+    cli()

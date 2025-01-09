@@ -138,7 +138,7 @@ def get_keywords_from_config(config_file: Path) -> List[str]:
         raise KeyError("Keywords not found in config file") from exc
 
 
-def read_config(config_file: Path, item_key: str) -> Dict[str, str]:
+def read_config(config_file: Path, item_key: str) -> Dict[str, Union[str, float, int]]:
     """
         Get the value of the given key item from a JSON file.
 
@@ -146,7 +146,7 @@ def read_config(config_file: Path, item_key: str) -> Dict[str, str]:
             config_file (Path): The path to the JSON config file.
             item_key (str): Key item defined in config file.
         Returns:
-            Dict[str, str]: The article selector configuration.
+            Dict[str, Union[str, float, int]]: The article selector configuration.
 
         Raises:
             KeyError: If the key item is not found in the config file.
@@ -154,7 +154,7 @@ def read_config(config_file: Path, item_key: str) -> Dict[str, str]:
     """
     try:
         with open(config_file, 'r', encoding=ENCODING) as f:
-            config: Dict[str, str] = json.load(f)[item_key]
+            config: Dict[str, Union[str, float, int]] = json.load(f)[item_key]
         if not config:
             raise ValueError("Config is empty")
         return config
@@ -165,7 +165,7 @@ def read_config(config_file: Path, item_key: str) -> Dict[str, str]:
 
 
 def save_filtered_articles(input_file: Any, article_id: str,
-                           output_dir: str) -> None:
+                           output_dir: Path) -> None:
     """Save filtered articles data to a JSON file.
 
     Args:

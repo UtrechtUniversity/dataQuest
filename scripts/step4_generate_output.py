@@ -2,11 +2,11 @@
 and saves their text for manual labeling"""
 import argparse
 import logging
-import os
 from pathlib import Path
 from typing import Union
 import pandas as pd
 from pandas import DataFrame
+from spacy.language import Language
 from dataQuest.settings import SPACY_MODEL
 from dataQuest.article_final_selection.process_article import ArticleProcessor
 from dataQuest.utils import read_config, get_file_name_without_extension
@@ -94,7 +94,57 @@ def find_articles_in_file(filepath: str, formatter: TextFormatter) -> (
         return None
 
 
-if __name__ == "__main__":
+def generate_output(
+    input_dir: Path,
+    glob_pattern: str,
+    config_path: Path,
+    output_dir: Path,
+    spacy_model: Union[str, Language] = SPACY_MODEL,
+):
+    """
+    Core functionality to select final articles and save them to output files.
+
+    Args:
+        input_dir (Path): Directory containing input files.
+        glob_pattern (str): Glob pattern to find input files (e.g., '*.csv').
+        config_path (Path): Path to the configuration file.
+        output_dir (Path): Directory to save output files.
+        spacy_model (Union[str, Language]): SpaCy model to use for text processing.
+    """
+    if not input_dir.is_dir():
+        raise ValueError(f"Not a directory: '{str(input_dir.absolute())}'")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    output_unit = read_config(config_path, OUTPUT_UNIT_KEY)
+    sentences_per_segment = '0'
+
+    if output_unit == SEGMENTED_TEXT_FORMATTER:
+        sentences_per_segment = str(read_config(config_path, SENTENCE_PER_SEGMENT_KEY))
+
+    text_formatter = TextFormatter(
+        str(output_unit),
+        int(sentences_per_segment),
+        spacy_model=spacy_model,
+    )
+
+    for articles_filepath in input_dir.rglob(glob_pattern):
+        try:
+            df = find_articles_in_file(str(articles_filepath), text_formatter)
+            if df is None:
+                continue
+
+            file_name = get_file_name_without_extension(str(articles_filepath))
+            output_file = output_dir / f"to_label_{file_name}.csv"
+            df.to_csv(output_file, index=False)
+        except Exception as e:  # pylint: disable=broad-except
+            logging.error("Error processing file %s: %s", articles_filepath, str(e))
+
+
+def cli():
+    """
+        Command-line interface for generating final output.
+    """
     parser = argparse.ArgumentParser("Select final articles.")
 
     parser.add_argument(
@@ -124,24 +174,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.input_dir.is_dir():
-        parser.error(f"Not a directory: '{str(args.input_dir.absolute())}'")
+    try:
+        generate_output(
+            input_dir=args.input_dir,
+            glob_pattern=args.glob,
+            config_path=args.config_path,
+            output_dir=args.output_dir
+        )
+    except ValueError as e:
+        parser.error(str(e))
+    except Exception as e:  # pylint: disable=broad-except
+        logging.error("Error occurred in CLI: %s", str(e))
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    output_unit = read_config(args.config_path, OUTPUT_UNIT_KEY)
 
-    SENTENCES_PER_SEGMENT = '0'
-    if output_unit == SEGMENTED_TEXT_FORMATTER:
-        SENTENCES_PER_SEGMENT = str(read_config(args.config_path,
-                                                SENTENCE_PER_SEGMENT_KEY))
-
-    text_formatter = TextFormatter(str(output_unit),
-                                   int(SENTENCES_PER_SEGMENT),
-                                   spacy_model=SPACY_MODEL)
-    for articles_filepath in args.input_dir.rglob(args.glob):
-        df = find_articles_in_file(articles_filepath, text_formatter)
-        if df is None:
-            continue
-        file_name = get_file_name_without_extension(articles_filepath)
-        df.to_csv(os.path.join(args.output_dir, 'to_label_'
-                               + file_name+'.csv'), index=False)
+if __name__ == "__main__":
+    cli()
