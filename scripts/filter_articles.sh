@@ -1,0 +1,1 @@
+filter-articles --input-dir "../dataQuest_data/transfered_data" --output-dir "../output/" --input-type "delpher_kranten" --glob "*.gz" --config-path "config.json" --period-type "decade"
