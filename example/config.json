@@ -1,0 +1,33 @@
+{
+ "filters": [
+        {
+            "type": "AndFilter",
+                "filters": [
+                        {
+                            "type": "YearFilter",
+                            "start_year": 1800,
+                            "end_year": 1910
+                        },
+                        {
+                            "type": "NotFilter",
+                            "filter": {
+                                "type": "ArticleTitleFilter",
+                                "article_title": "Advertentie"
+                            },
+                            "level": "article"
+                        },
+                        {
+                            "type": "KeywordsFilter",
+                            "keywords": ["dames", "liberalen"]
+                        }
+                ]
+        }
+ ],
+  "article_selector":
+    {
+      "type": "percentage",
+      "value": "30"
+    },
+  "output_unit": "segmented_text",
+  "sentences_per_segment": 10
+}
