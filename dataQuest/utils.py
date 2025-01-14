@@ -106,32 +106,38 @@ def load_filters_from_config(config_file: Path) -> AndFilter:
 
 def get_keywords_from_config(config_file: Path) -> List[str]:
     """
-        Extract keywords from a JSON configuration file.
+    Extract keywords from a JSON configuration file.
 
-        Args:
-            config_file (Path): The path to the JSON configuration file.
+    Args:
+        config_file (Path): The path to the JSON configuration file.
 
-        Returns:
-            List[str]: The list of keywords extracted from the configuration
-            file.
+    Returns:
+        List[str]: The list of keywords extracted from the configuration file.
 
-        Raises:
-            FileNotFoundError: If the config file is not found or cannot be
-            opened.
-            KeyError: If the required keys are not found in the configuration
-            file.
-            TypeError: If the data in the configuration file is not in the
-            expected format.
+    Raises:
+        FileNotFoundError: If the config file is not found or cannot be opened.
+        KeyError: If the required keys are not found in the configuration file.
     """
-    try:
-        with open(config_file, 'r', encoding=ENCODING) as f:
-            config: Dict[str, List[Dict[str, Any]]] = json.load(f)
+    def extract_keywords(filters: List[Dict[str, Any]]) -> List[str]:
+        """Recursively extract keywords from a list of filters."""
+        keywords = []
+        for filter_config in filters:
+            filter_type = filter_config.get("type")
+            if filter_type == "KeywordsFilter":
+                keywords.extend(filter_config.get("keywords", []))
+            elif filter_type in {"AndFilter", "OrFilter"}:
+                keywords.extend(extract_keywords(filter_config.get("filters", [])))
+            elif filter_type == "NotFilter":
+                inner_filter = filter_config.get("filter")
+                if inner_filter:
+                    keywords.extend(extract_keywords([inner_filter]))
+        return keywords
 
-        for filter_config in config['filters']:
-            filter_type = filter_config['type']
-            if filter_type == 'KeywordsFilter':
-                return filter_config['keywords']
-        return []
+    try:
+        with open(config_file, "r", encoding="utf-8") as f:
+            config: Dict[str, Any] = json.load(f)
+        filters = config.get("filters", [])
+        return extract_keywords(filters)
     except FileNotFoundError as exc:
         raise FileNotFoundError("Config file not found") from exc
     except KeyError as exc:
