@@ -19,6 +19,7 @@ from dataQuest.temporal_categorization.timestamped_data import TimestampedData
 from dataQuest.utils import get_keywords_from_config
 from dataQuest.utils import read_config
 from dataQuest.article_final_selection.process_articles import select_articles
+from dataQuest.generate_output import generate_output
 
 ARTICLE_SELECTOR_FIELD = "article_selector"
 OUTPUT_FILE_NAME = 'articles'
@@ -236,6 +237,13 @@ def cli():
             input_dir=args.output_dir / "output_timestamped",
             glob_pattern="*.csv",
             config_path=args.config_path,
+        )
+
+        generate_output(
+                    input_dir=args.output_dir / "output_timestamped",
+                    glob_pattern="*.csv",
+                    config_path=args.config_path,
+                    output_dir=args.output_dir / "results"
         )
 
     except ValueError as e:

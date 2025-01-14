@@ -1,6 +1,5 @@
 """This script reads selected articles from CSV files,
 and saves their text for manual labeling"""
-import argparse
 import logging
 from pathlib import Path
 from typing import Union
@@ -139,53 +138,3 @@ def generate_output(
             df.to_csv(output_file, index=False)
         except Exception as e:  # pylint: disable=broad-except
             logging.error("Error processing file %s: %s", articles_filepath, str(e))
-
-
-def cli():
-    """
-        Command-line interface for generating final output.
-    """
-    parser = argparse.ArgumentParser("Select final articles.")
-
-    parser.add_argument(
-        "--input-dir",
-        type=Path,
-        required=True,
-        help="Base directory for reading input files.",
-    )
-    parser.add_argument(
-        "--glob",
-        type=str,
-        default="*.csv",
-        help="Glob pattern for find input files; e.g. '*.csv'.",
-    )
-    parser.add_argument(
-        "--config-path",
-        type=Path,
-        default="config.json",
-        help="File path of config file.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        required=True,
-        help="The directory for storing output files.",
-    )
-
-    args = parser.parse_args()
-
-    try:
-        generate_output(
-            input_dir=args.input_dir,
-            glob_pattern=args.glob,
-            config_path=args.config_path,
-            output_dir=args.output_dir
-        )
-    except ValueError as e:
-        parser.error(str(e))
-    except Exception as e:  # pylint: disable=broad-except
-        logging.error("Error occurred in CLI: %s", str(e))
-
-
-if __name__ == "__main__":
-    cli()

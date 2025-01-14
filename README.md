@@ -121,7 +121,7 @@ contain advertisements (e.g., "Advertentie").
  ],
 
 ```
-To select the most relevant articles:
+The steps to select the most relevant articles and generate the output:
 1. articles are selected based the filters in the config file 
 
 
@@ -135,30 +135,10 @@ such as ```year``` or ```decade```. This categorization is essential for subsequ
    
    3.2. Utilize TF-IDF (the default model), which can be extended to other models.
 
-```commandline
-python3 scripts/filter_articles.py 
 
-    --input-dir "path/to/converted/json/compressed/" 
-    
-    --output-dir "output/" 
-    
-    --input-type "delpher_kranten" 
-    
-    --glob "*.gz"
-    
-    --period-type "decade"
-```
-In our case:
-- The input data consists of compressed JSON files with the .gz extension. 
-- The input type is "delpher_kranten". 
-- Selected articles are categorized by decade.
+4. Select final articles based on criteria defined in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json). 
 
-
-#### Output
-The output consists of a .csv file for each period, such as one file per decade. Each file contains the ```file_path``` and ```article_id``` of the filtered articles, 
-along with an additional column, ```selected```, which indicates the articles labeled as the most relevant by the model (e.g., TF-IDF).
-
-There are different strategies for selecting the final articles. You should specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json):
+There are different strategies for selecting the final articles:
 
 - Percentage: Select a percentage of articles with the highest scores.
 
@@ -190,8 +170,8 @@ There are different strategies for selecting the final articles. You should spec
     }, 
 ```
 
+5. Generate output 
 
-### 3. Generate output
 As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs or a segmentation of the text.
 This feature can be set in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json).
 ```commandline
@@ -206,11 +186,30 @@ OR
 "sentences_per_segment": 10
 ```
 
+To run the pipeline:
+
 ```commandline
-python3 scripts/generate_output.py 
---input-dir "output/output_timestamped/” 
---output-dir “output/output_results/“  
---glob “*.csv”
+python3 dataQuest/filter_articles.py 
+
+    --input-dir "path/to/converted/json/compressed/" 
+    
+    --output-dir "output/" 
+    
+    --input-type "delpher_kranten" 
+    
+    --glob "*.gz"
+    
+    --period-type "decade"
+```
+In our case:
+- The input data consists of compressed JSON files with the .gz extension. 
+- The input type is "delpher_kranten". 
+- Selected articles are categorized by decade.
+
+OR
+
+```
+sh scripts/filter_articles.sh
 ```
 ## About the Project
 **Date**: February 2024
