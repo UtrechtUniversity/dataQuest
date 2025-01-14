@@ -130,6 +130,7 @@ such as ```year``` or ```decade```. This categorization is essential for subsequ
 
 
 3. Select the most relevant articles related to the specified topic (defined by the provided keywords).
+   
    3.1. Select articles that contain any of the specified keywords in their title.
    
    3.2. Utilize TF-IDF (the default model), which can be extended to other models.
