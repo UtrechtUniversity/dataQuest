@@ -25,6 +25,8 @@ dynamic = ["version"]
 dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy==3.5.4","scikit-learn","numpy==1.26.4","scipy",
     "flake8-pyproject","thinc==8.1.12"
 ]
+[tool.setuptools_scm]
+write_to = "dataQuest/_version.py"
 
 [project.optional-dependencies]
 lint = ["flake8"]
