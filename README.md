@@ -20,30 +20,11 @@ To install and run this project you need to have the following prerequisites ins
 ```
 
 ### Installation
-#### Option 1 - Install dataQuest package
 To run the project, ensure to install the dataQuest package that is part of this project.
 ```
 pip install dataQuest
 ```
-#### Option 2 - Run from source code
-If you want to run the scripts without installation you need to:  
 
-- Install requirement
-```commandline
-pip install setuptools wheel
-python -m pip install build
-```
-Change your current working directory to the location of your pyproject.toml file.
-```
-python -m build
-pip install .
-```
-- Set PYTHONPATH environment: 
-On Linux and Mac OS, you might have to set the PYTHONPATH environment variable to point to this directory.
-
-```commandline
-export PYTHONPATH="current working directory/dataQuest:${PYTHONPATH}"
-```
 ### Built with
 These packages are automatically installed in the step above:
 * [scikit-learn](https://scikit-learn.org/stable/)
@@ -93,92 +74,96 @@ extractor.extract_xml_string()
 
 Navigate to scripts folder and run:
 ```
-python3 convert_input_files.py --input_dir path/to/raw/xml/data --output_dir path/to/converted/json/compressed/output
+python3 convert_input_files.py 
+   --input_dir path/to/raw/xml/data 
+   --output_dir path/to/converted/json/compressed/output
 ```
 #### Customize input-file
 
-In order to define a corpus with a new data format you should:
+In order to add a new corpus to dataQuest you should:
 
+- prepare your input data in the JSON format explained above.
 - add a new input_file_type to [INPUT_FILE_TYPES](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/__init__.py)
 - implement a class that inherits from [input_file.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/input_file.py).
 This class is customized to read a new data format. In our case-study we defined [delpher_kranten.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/filter/delpher_kranten.py).
 
 
-### 2. Filtering
-In this step, you may select articles based on a filter or a collection of filters. Articles can be filtered by title, year, decade, or a set of keywords defined in the ```config.json``` file.
+### 2. Filter articles
+You can select articles based on a single filter or a combination of filters. Articles can be filtered by title, year, 
+decade, or a set of keywords defined in the ```config.json``` file. Logical operators such as AND, OR, and NOT can be used to combine filtering expressions.
+
+In the following example, you select articles that include any of the specified keywords AND were published between 1800 and 1910 AND do not 
+contain advertisements (e.g., "Advertentie").
 ```commandline
  "filters": [
         {
             "type": "AndFilter",
-            "filters": [
-                {
-                    "type": "OrFilter",
-                    "filters": [
+                "filters": [
                         {
                             "type": "YearFilter",
                             "start_year": 1800,
                             "end_year": 1910
                         },
                         {
-                            "type": "DecadeFilter",
-                            "decade": 1960
+                            "type": "NotFilter",
+                            "filter": {
+                                "type": "ArticleTitleFilter",
+                                "article_title": "Advertentie"
+                            },
+                            "level": "article"
+                        },
+                        {
+                            "type": "KeywordsFilter",
+                            "keywords": ["sustainability", "green"]
                         }
-                    ]
-                },
-                {
-                    "type": "NotFilter",
-                    "filter": {
-                        "type": "ArticleTitleFilter",
-                        "article_title": "Advertentie"
-                    },
-                    "level": "article"
-                },
-                {
-                    "type": "KeywordsFilter",
-                    "keywords": ["sustainability", "green"]
-                }
-            ]
+                ]
         }
-    ]
+ ],
 
 ```
-run the following to filter the articles:
-```commandline
-python3 scripts/step1_filter_articles.py --input-dir "path/to/converted/json/compressed/output/" --output-dir "output_filter/" --input-type "delpher_kranten" --glob "*.gz"
-```
-In our case, input-type is "delpher_kranten", and input data is a set of compresed json files with ```.gz``` extension.
+To select the most relevant articles:
+1. articles are selected based the filters in the config file 
 
-The output of this script is a JSON file for each selected article in the following format:
-```commandline
-{
-    "file_path": "output/transfered_data/00/KRANTEN_KBPERS01_000002100.json.gz",
-    "article_id": "5",
-    "Date": "1878-04-29",
-    "Title": "Opregte Haarlemsche Courant"
-}
-```
-### 3. Categorization by timestamp
-The output files generated in the previous step are categorized based on a specified [period-type](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/temporal_categorization/__init__.py), 
-such as ```year``` or ```decade```. This categorization is essential for subsequent steps, especially if you intend to apply tf-idf or other models to specific periods. In our case, we applied tf-idf per decade.
+
+2. selected articles are categorized based on a specified [period-type](https://github.com/UtrechtUniversity/dataQuest/blob/main/dataQuest/temporal_categorization/__init__.py), 
+such as ```year``` or ```decade```. This categorization is essential for subsequent steps, especially in case of applying tf-idf or other models to specific periods.
+
+
+3. Select the most relevant articles related to the specified topic (defined by the provided keywords).
+   3.1. Select articles that contain any of the specified keywords in their title.
+   
+   3.2. Utilize TF-IDF (the default model), which can be extended to other models.
 
 ```commandline
-python3 scripts/step2_categorize_by_timestamp.py --input-dir "output_filter/" --glob "*.json" --period-type "decade"  --output-dir "output_timestamped/"
+python3 scripts/filter_articles.py 
 
+    --input-dir "path/to/converted/json/compressed/" 
+    
+    --output-dir "output/" 
+    
+    --input-type "delpher_kranten" 
+    
+    --glob "*.gz"
+    
+    --period-type "decade"
 ```
-The output consists of a .csv file for each period, such as one file per decade, containing the ```file_path``` and ```article_id``` of selected articles.
+In our case:
+- The input data consists of compressed JSON files with the .gz extension. 
+- The input type is "delpher_kranten". 
+- Selected articles are categorized by decade.
 
-### 4. Select final articles
-This step is applicable when articles are filtered (in step 2) using a set of keywords. 
-By utilizing tf-idf, the most relevant articles related to the specified topic (defined by the provided keywords) are selected.
 
-Before applying tf-idf, articles containing any of the specified keywords in their title are selected.
+#### Output
+The output consists of a .csv file for each period, such as one file per decade. Each file contains the ```file_path``` and ```article_id``` of the filtered articles, 
+along with an additional column, ```selected```, which indicates the articles labeled as the most relevant by the model (e.g., TF-IDF).
 
-From the rest of articles, to choose the most relevant ones, you can specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json):
+There are different strategies for selecting the final articles. You should specify one of the following criteria in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json):
 
-- Percentage of selected articles with the top scores
-- Maximum number of selected articles with the top scores 
-- Threshold for the value of cosine similarity between the embeddings of list of keywords and each article.
+- Percentage: Select a percentage of articles with the highest scores.
 
+- Maximum Number: Specify the maximum number of articles to select based on their scores.
+
+- Threshold: Set a threshold for the cosine similarity value between the embeddings of the keyword list and each article.
 
 ```commandline
   "article_selector":
@@ -204,12 +189,8 @@ From the rest of articles, to choose the most relevant ones, you can specify one
     }, 
 ```
 
-The following script, add a new column, ```selected``` to the .csv files from the previous step.
-```commandline
-python3 scripts/step3_select_final_articles.py --input-dir "output/output_timestamped/"
-```
 
-### 5. Generate output
+### 3. Generate output
 As the final step of the pipeline, the text of the selected articles is saved in a .csv file, which can be used for manual labeling. The user has the option to choose whether the text should be divided into paragraphs or a segmentation of the text.
 This feature can be set in [config.py](https://github.com/UtrechtUniversity/dataQuest/blob/main/config.json).
 ```commandline
@@ -225,7 +206,10 @@ OR
 ```
 
 ```commandline
-python3 scripts/step4_generate_output.py --input-dir "output/output_timestamped/” --output-dir “output/output_results/“  --glob “*.csv”
+python3 scripts/generate_output.py 
+--input-dir "output/output_timestamped/” 
+--output-dir “output/output_results/“  
+--glob “*.csv”
 ```
 ## About the Project
 **Date**: February 2024
@@ -239,7 +223,6 @@ Pim Huijnen (p.huijnen@uu.nl)
 
 - Parisa Zahedi (p.zahedi@uu.nl)
 - Shiva Nadi (s.nadi@uu.nl)
-- Matty Vermet (m.s.vermet@uu.nl)
 
 
 ### License

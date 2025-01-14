@@ -6,9 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "dataQuest"
 description = "A package to extract hystorical news sentiments"
 authors = [
-    {name = "Shiva Nadi", email = "s.nadi@uu.nl"},
     {name = "Parisa Zahedi", email = "p.zahedi@uu.nl"},
-    {name = "Matty Vermet", email = "m.s.vermet@uu.nl"}
+    {name = "Shiva Nadi", email = "s.nadi@uu.nl"}
 ]
 readme = "README.md"
 requires-python = ">=3.8"
@@ -52,3 +51,11 @@ module = [
     "sklearn.*"
 ]
 ignore_missing_imports = true
+
+[project.scripts]
+filter-articles = "dataQuest.filter_articles:cli"
+generate-output = "dataQuest.generate_output:cli"
+
+[tool.setuptools.package-data]
+"dataQuest" = ["config.json"]
+
