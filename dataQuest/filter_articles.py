@@ -93,16 +93,19 @@ def categorize_articles(
             timestamp = timestamped_object.categorize()
             timestamp_file_name = output_dir / f"{OUTPUT_FILE_NAME}_{timestamp}.csv"
 
+            expected_columns = [FILENAME_COLUMN, ARTICLE_ID_COLUMN]
+
             if timestamp_file_name.exists():
                 df = pd.read_csv(timestamp_file_name)
             else:
-                df = pd.DataFrame(columns=[FILENAME_COLUMN, ARTICLE_ID_COLUMN])
+                df = pd.DataFrame(columns=expected_columns)
 
             new_row = {
-                FILENAME_COLUMN: str(timestamped_object.data()[FILENAME_COLUMN]),
-                ARTICLE_ID_COLUMN: str(timestamped_object.data()[ARTICLE_ID_COLUMN]),
+                FILENAME_COLUMN: str(timestamped_object.data().get(FILENAME_COLUMN, "")),
+                ARTICLE_ID_COLUMN: str(timestamped_object.data().get(ARTICLE_ID_COLUMN, ""))
             }
-            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            df = pd.concat([df, pd.DataFrame([new_row], columns=expected_columns)],
+                           ignore_index=True)
 
             df.to_csv(timestamp_file_name, index=False)
 
