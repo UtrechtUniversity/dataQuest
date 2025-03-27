@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dataQuest"
+version = "0.1.1"
 description = "A package to extract hystorical news sentiments"
 authors = [
     {name = "Parisa Zahedi", email = "p.zahedi@uu.nl"},
@@ -20,13 +21,12 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: MIT License",
 ]
-dynamic = ["version"]
+
 
 dependencies = ["tqdm","pandas","pandas-stubs", "types-tqdm","spacy==3.5.4","scikit-learn","numpy==1.26.4","scipy",
     "flake8-pyproject","thinc==8.1.12"
 ]
 [tool.setuptools_scm]
-write_to = "dataQuest/_version.py"
 
 [project.optional-dependencies]
 lint = ["flake8"]
