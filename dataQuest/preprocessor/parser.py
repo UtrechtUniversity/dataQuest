@@ -111,8 +111,9 @@ class XMLExtractor:
             output_file (str): Path to the output JSON file.
         """
         try:
-            with gzip.open(output_file, 'wt') as json_file:
-                json.dump(data, json_file, indent=4)
+            with gzip.open(output_file, 'wt', encoding='utf-8') as json_file:
+                json.dump(data, json_file, indent=4, ensure_ascii=False)
+
         except Exception as e:
             logging.error(f"Error saving compressed JSON to {output_file}: {e}")  # noqa: E501
 
