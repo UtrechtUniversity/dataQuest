@@ -22,6 +22,7 @@ SELECTED_FIELD = "selected"
 DATE_FIELD = "date"
 
 OUTPUT_UNIT_KEY = "output_unit"
+MIN_TEXT_CHARS = "min_text_chars"
 SENTENCE_PER_SEGMENT_KEY = "sentences_per_segment"
 
 
@@ -110,12 +111,12 @@ def generate_output(
         output_dir (Path): Directory to save output files.
         spacy_model (Union[str, Language]): SpaCy model to use for text processing.
     """
+    output_unit = read_config(config_path, OUTPUT_UNIT_KEY)
+    min_text_chars = read_config(config_path, MIN_TEXT_CHARS)
     if not input_dir.is_dir():
         raise ValueError(f"Not a directory: '{str(input_dir.absolute())}'")
 
     output_dir.mkdir(parents=True, exist_ok=True)
-
-    output_unit = read_config(config_path, OUTPUT_UNIT_KEY)
     sentences_per_segment = '0'
 
     if output_unit == SEGMENTED_TEXT_FORMATTER:
@@ -130,9 +131,15 @@ def generate_output(
     for articles_filepath in input_dir.rglob(glob_pattern):
         try:
             df = find_articles_in_file(str(articles_filepath), text_formatter)
-            if df is None:
+            if df is None or df.empty:
                 continue
+            assert isinstance(df, pd.DataFrame)
 
+            if BODY_FIELD in df.columns:
+                df = df[df[BODY_FIELD].str.len() >= int(str(min_text_chars))]
+
+            if df.empty:
+                continue
             file_name = get_file_name_without_extension(str(articles_filepath))
             output_file = output_dir / f"to_label_{file_name}.csv"
             df.to_csv(output_file, index=False)

@@ -5,8 +5,8 @@
                 "filters": [
                         {
                             "type": "YearFilter",
-                            "start_year": 1800,
-                            "end_year": 1910
+                            "start_year": 1960,
+                            "end_year": 1995
                         },
                         {
                             "type": "NotFilter",
@@ -18,7 +18,10 @@
                         },
                         {
                             "type": "KeywordsFilter",
-                            "keywords": ["sustainability", "green"]
+                            "keywords": ["windkracht", "windenergie", "windenergiebranche", "windturbine", "windstroom",
+"zonne-energie", "zonnewarmte", "zonnestraling", "geothermische energie", "aardwarmte",
+"waterkracht", "waterkrachtcentrale", "waterkrachtwerken", "waterstof", "waterstofenergie",
+"hydroturbine", "getijden-energie", "ethanol-produktie", "ethanol"]
                         }
                 ]
         }
@@ -26,8 +29,8 @@
   "article_selector":
     {
       "type": "percentage",
-      "value": "30"
+      "value": "2"
     },
-  "output_unit": "segmented_text",
-  "sentences_per_segment": 10
+  "output_unit": "paragraph",
+  "min_text_chars": 200
 }
